@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FirstTaskManager - プロトタイプ</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ボード一覧画面 -->
+  <div id="screen-board-list" class="screen active">
+    <header class="header">
+      <h1 class="app-title">FirstTaskManager</h1>
+    </header>
+    <main class="main">
+      <div class="page-header">
+        <h2 class="page-title">ボード一覧</h2>
+        <button class="btn btn-primary" id="btn-new-board">+ 新規ボード</button>
+      </div>
+
+      <div id="new-board-form" class="inline-form hidden">
+        <input type="text" id="new-board-input" class="inline-input" placeholder="ボード名を入力...">
+        <button class="btn btn-primary btn-sm" id="btn-new-board-save">作成</button>
+        <button class="btn btn-secondary btn-sm" id="btn-new-board-cancel">キャンセル</button>
+      </div>
+
+      <div class="board-grid" id="board-grid">
+        <!-- ボードカードがここに動的生成される -->
+      </div>
+    </main>
+  </div>
+
+  <!-- ボード詳細画面 -->
+  <div id="screen-board-detail" class="screen">
+    <header class="header">
+      <button class="btn btn-back" id="btn-back">← 戻る</button>
+      <h1 class="board-name" id="board-detail-title">仕事ボード</h1>
+    </header>
+    <main class="board-main">
+      <div class="list-container" id="list-container">
+        <!-- リストがここに動的生成される -->
+      </div>
+      <div class="add-list-btn-wrap">
+        <button class="btn btn-add-list" id="btn-add-list">+ リストを追加</button>
+        <div id="new-list-form" class="inline-form hidden">
+          <input type="text" id="new-list-input" class="inline-input" placeholder="リスト名を入力...">
+          <button class="btn btn-primary btn-sm" id="btn-new-list-save">作成</button>
+          <button class="btn btn-secondary btn-sm" id="btn-new-list-cancel">キャンセル</button>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- カード詳細モーダル -->
+  <div id="modal-overlay" class="modal-overlay hidden">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 class="modal-card-title" id="modal-card-title-display">タスクA</h2>
+        <button class="btn-close" id="btn-modal-close">× 閉じる</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">タイトル</label>
+          <input type="text" class="form-input" id="modal-title-input" placeholder="タイトルを入力...">
+        </div>
+        <div class="form-group">
+          <label class="form-label">説明</label>
+          <textarea class="form-textarea" id="modal-desc-input" placeholder="ここに説明を入力..."></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">期限日</label>
+          <input type="date" class="form-input" id="modal-due-input">
+        </div>
+        <div class="form-group">
+          <label class="form-label">ラベル</label>
+          <div class="label-list" id="modal-label-list"></div>
+          <div class="label-picker hidden" id="label-picker">
+            <button class="label-option label-red" data-label="緊急" data-color="red">🔴 緊急</button>
+            <button class="label-option label-blue" data-label="確認待ち" data-color="blue">🔵 確認待ち</button>
+            <button class="label-option label-green" data-label="完了" data-color="green">🟢 完了</button>
+            <button class="label-option label-yellow" data-label="保留" data-color="yellow">🟡 保留</button>
+          </div>
+          <button class="btn btn-add-label" id="btn-add-label">+ ラベルを追加</button>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="btn-modal-cancel">キャンセル</button>
+        <button class="btn btn-primary" id="btn-modal-save">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 確認ダイアログ -->
+  <div id="confirm-overlay" class="modal-overlay hidden">
+    <div class="confirm-dialog">
+      <p class="confirm-message" id="confirm-message">削除してもよろしいですか？</p>
+      <div class="confirm-actions">
+        <button class="btn btn-secondary" id="btn-confirm-cancel">キャンセル</button>
+        <button class="btn btn-danger" id="btn-confirm-ok">削除</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
