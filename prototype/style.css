@@ -613,6 +613,41 @@ body {
   gap: 10px;
 }
 
+/* ---- カード完了 ---- */
+.card-top {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.card-checkbox {
+  margin-top: 2px;
+  flex-shrink: 0;
+  width: 15px;
+  height: 15px;
+  cursor: pointer;
+  accent-color: #0052cc;
+}
+
+.card-done {
+  opacity: 0.6;
+}
+
+.card-title-done {
+  text-decoration: line-through;
+  color: #8993a4;
+}
+
+/* ---- モーダルフッター ---- */
+.modal-footer {
+  justify-content: space-between !important;
+}
+
+.modal-footer-right {
+  display: flex;
+  gap: 10px;
+}
+
 /* ---- ドラッグオーバー ---- */
 .list-cards.drag-over {
   background: #c8d4e8;

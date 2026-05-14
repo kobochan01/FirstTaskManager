@@ -11,10 +11,10 @@ let lists = [
 ];
 
 let cards = [
-  { id: 1, listId: 1, order: 0, title: 'タスクA', desc: '', due: '', labels: [{ name: '緊急', color: 'red' }] },
-  { id: 2, listId: 1, order: 1, title: 'タスクB', desc: '', due: '2025-05-20', labels: [] },
-  { id: 3, listId: 2, order: 0, title: 'タスクC', desc: '', due: '', labels: [{ name: '確認待ち', color: 'blue' }] },
-  { id: 4, listId: 3, order: 0, title: 'タスクE', desc: '', due: '', labels: [] },
+  { id: 1, listId: 1, order: 0, title: 'タスクA', desc: '', due: '', labels: [{ name: '緊急', color: 'red' }], done: false },
+  { id: 2, listId: 1, order: 1, title: 'タスクB', desc: '', due: '2025-05-20', labels: [], done: false },
+  { id: 3, listId: 2, order: 0, title: 'タスクC', desc: '', due: '', labels: [{ name: '確認待ち', color: 'blue' }], done: false },
+  { id: 4, listId: 3, order: 0, title: 'タスクE', desc: '', due: '', labels: [], done: false },
 ];
 
 let nextBoardId = 3;
@@ -172,7 +172,7 @@ function createListElement(list) {
     const title = textarea.value.trim();
     if (!title) return;
     const maxOrder = cards.filter(c => c.listId === list.id).reduce((m, c) => Math.max(m, c.order), -1);
-    const newCard = { id: nextCardId++, listId: list.id, order: maxOrder + 1, title, desc: '', due: '', labels: [] };
+    const newCard = { id: nextCardId++, listId: list.id, order: maxOrder + 1, title, desc: '', due: '', labels: [], done: false };
     cards.push(newCard);
     cardsContainer.appendChild(createCardElement(newCard));
     textarea.value = '';
@@ -259,9 +259,13 @@ function startEditListName(listId, listEl) {
   });
 }
 
+function findDoneList(boardId) {
+  return lists.find(l => l.boardId === boardId && /done|完了/i.test(l.name));
+}
+
 function createCardElement(card) {
   const el = document.createElement('div');
-  el.className = 'card';
+  el.className = 'card' + (card.done ? ' card-done' : '');
   el.draggable = true;
   el.dataset.cardId = card.id;
 
@@ -276,10 +280,31 @@ function createCardElement(card) {
   }
 
   el.innerHTML = `
-    <div class="card-title">${escHtml(card.title)}</div>
+    <div class="card-top">
+      <input type="checkbox" class="card-checkbox" ${card.done ? 'checked' : ''}>
+      <div class="card-title ${card.done ? 'card-title-done' : ''}">${escHtml(card.title)}</div>
+    </div>
     ${metaHtml ? `<div class="card-meta">${metaHtml}</div>` : ''}`;
 
-  el.addEventListener('click', () => openCardModal(card.id));
+  const checkbox = el.querySelector('.card-checkbox');
+  checkbox.addEventListener('click', e => {
+    e.stopPropagation();
+    card.done = checkbox.checked;
+    if (card.done) {
+      const doneList = findDoneList(currentBoardId);
+      if (doneList && card.listId !== doneList.id) {
+        card.listId = doneList.id;
+        const maxOrder = cards.filter(c => c.listId === doneList.id).reduce((m, c) => Math.max(m, c.order), -1);
+        card.order = maxOrder + 1;
+      }
+    }
+    renderBoardDetail();
+  });
+
+  el.addEventListener('click', e => {
+    if (e.target.classList.contains('card-checkbox')) return;
+    openCardModal(card.id);
+  });
 
   el.addEventListener('dragstart', () => {
     dragCardId = card.id;
@@ -439,6 +464,16 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('btn-modal-cancel').addEventListener('click', closeModal);
   document.getElementById('modal-overlay').addEventListener('click', e => {
     if (e.target === document.getElementById('modal-overlay')) closeModal();
+  });
+
+  // モーダル：削除
+  document.getElementById('btn-modal-delete').addEventListener('click', () => {
+    const card = cards.find(c => c.id === editingCardId);
+    showConfirm(`「${card.title}」を削除しますか？`, () => {
+      cards = cards.filter(c => c.id !== editingCardId);
+      closeModal();
+      renderBoardDetail();
+    });
   });
 
   // モーダル：保存
