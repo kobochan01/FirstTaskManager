@@ -8,14 +8,20 @@
 | スタイル | CSS |
 | インタラクション | JavaScript（Vanilla） |
 
-## フェーズ2：DB移行（仮・要確認）
+## フェーズ2：本実装
 
 | 役割 | 技術 |
 |------|------|
-| フロントエンド | React |
-| バックエンド | Node.js + Express |
+| フロントエンド | React + TypeScript |
+| スタイル | Tailwind CSS |
+| フロントエンドビルド | Vite |
+| バックエンド | Java + Spring Boot |
+| API | REST API（Spring Web MVC） |
+| ORM | Spring Data JPA + Hibernate |
+| DBマイグレーション | Flyway |
 | データベース | PostgreSQL |
-| ORM | Prisma |
-| スタイル | CSS |
+| ビルドツール（Java） | Gradle |
+| 認証 | Spring Security |
 
-> バックエンド・DB技術は仮選定。スクールの指定や学習進捗に応じて変更予定。
+> バックエンド（Java + Spring Boot）・フロントエンド（React）・データベース（PostgreSQL）はスクール指定のため固定。
+> その他のツールはそれぞれの技術に合わせて選定。
