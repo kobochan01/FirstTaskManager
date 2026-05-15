@@ -7,7 +7,7 @@ Trello風のタスク管理アプリです。ボード・リスト・カード�
 ## 概要
 
 プログラミングスクールの課題として作成したWebアプリケーションです。
-ドラッグ&ドロップの実装、localStorageを用いたデータ永続化などの学習を目的としています。
+ReactとSpring Bootを用いたフルスタック開発、PostgreSQLによるデータ永続化などの学習を目的としています。
 
 ---
 
@@ -18,13 +18,13 @@ Trello風のタスク管理アプリです。ボード・リスト・カード�
 - カードの作成・編集・削除
 - カードへの説明文・期限日・ラベルの設定
 - ドラッグ&ドロップによるカードのリスト間移動
-- localStorageによるデータ永続化
+- PostgreSQLによるデータ永続化
 
 ---
 
 ## 技術スタック
 
-### フェーズ1：プロトタイプ（現在）
+### フェーズ1：プロトタイプ（完了）
 
 | 役割 | 技術 |
 |------|------|
@@ -32,27 +32,57 @@ Trello風のタスク管理アプリです。ボード・リスト・カード�
 | スタイル | CSS |
 | インタラクション | JavaScript（Vanilla） |
 
-### フェーズ2（予定）
+### フェーズ2：本実装（進行中）
 
 | 役割 | 技術 |
 |------|------|
-| フロントエンド | React |
-| データ保存 | localStorage |
-| スタイル | CSS |
-
-### フェーズ3（予定）
-
-| 役割 | 技術 |
-|------|------|
-| バックエンド | Node.js + Express |
-| データベース | PostgreSQL |
-| ORM | Prisma |
+| フロントエンド | React + TypeScript |
+| バックエンド | Java 21 + Spring Boot 3.3 |
+| ORM | Spring Data JPA + Hibernate |
+| データベース | PostgreSQL 16 |
+| インフラ | Docker / docker-compose |
 
 ---
 
 ## 環境構築・起動方法
 
-※ 実装完了後に追記予定
+### 必要なもの
+
+- Docker Desktop
+
+### 1. DBの起動
+
+```bash
+docker-compose up -d
+```
+
+| サービス | URL | 備考 |
+|---------|-----|------|
+| PostgreSQL | `localhost:5432` | DB本体 |
+| pgAdmin | `http://localhost:5050` | DB管理UI |
+
+pgAdminのログイン情報：
+- Email: `admin@example.com`
+- Password: `admin`
+
+### 2. バックエンドの起動
+
+```bash
+# Mac / Linux
+cd backend
+./mvnw spring-boot:run
+
+# Windows
+cd backend
+.\mvnw.cmd spring-boot:run
+```
+
+起動後、以下のエンドポイントで動作確認できます。
+
+| エンドポイント | 内容 |
+|--------------|------|
+| `GET http://localhost:8080/api/health` | ヘルスチェック |
+| `GET http://localhost:8080/api/boards` | ボード一覧取得 |
 
 ---
 
@@ -61,6 +91,7 @@ Trello風のタスク管理アプリです。ボード・リスト・カード�
 | ドキュメント | リンク |
 |-------------|--------|
 | 要件定義書 | [docs/requirements.md](docs/requirements.md) |
-| 画面遷移図 | [docs/screen-flow.md](docs/screen-flow.md) |
-| ワイヤーフレーム | [docs/wireframe.md](docs/wireframe.md) |
-| ER図 | [docs/er-diagram.md](docs/er-diagram.md) |
+| 機能要件 | [docs/functional-requirements.md](docs/functional-requirements.md) |
+| 画面設計 | [docs/screen-design.md](docs/screen-design.md) |
+| データベース設計 | [docs/database-design.md](docs/database-design.md) |
+| 技術スタック | [docs/tech-stack.md](docs/tech-stack.md) |
