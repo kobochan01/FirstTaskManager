@@ -8,4 +8,7 @@ import java.util.List;
 @Repository
 public interface CardRepository extends JpaRepository<Card, Long> {
     List<Card> findByTaskListIdOrderByPosition(Long taskListId);
+
+    List<Card> findByTitleContainingIgnoreCaseOrDescriptionContainingIgnoreCase(
+            String title, String description);
 }
