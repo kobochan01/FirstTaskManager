@@ -333,6 +333,40 @@ mark {
   padding: 0 1px;
 }
 
+/* ---- リスト追加カラム ---- */
+.add-list-column {
+  flex-shrink: 0;
+  width: 260px;
+  align-self: flex-start;
+}
+
+.add-list-btn {
+  background: #fff;
+  border: 2px dashed #b3bac5;
+  color: #5e6c84;
+  font-size: 14px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+.add-list-btn:hover {
+  background: #f4f5f7;
+  border-color: #0052cc;
+  color: #0052cc;
+}
+
+.add-list-form {
+  background: #ebecf0;
+  border-radius: 8px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
 /* ---- カード追加フォーム ---- */
 .add-card-btn {
   background: transparent;

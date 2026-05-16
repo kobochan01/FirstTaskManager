@@ -3,6 +3,7 @@ import type {
   Board,
   BoardDetailResponse,
   CardResponse,
+  TaskListResponse,
 } from '../types/api';
 
 const BASE = '/api';
@@ -47,5 +48,13 @@ export function createCard(
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ title, description: description || null, dueDate: dueDate || null }),
+  });
+}
+
+export function createList(boardId: number, name: string): Promise<TaskListResponse> {
+  return request<TaskListResponse>(`/boards/${boardId}/lists`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name }),
   });
 }
