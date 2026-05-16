@@ -36,3 +36,16 @@ export function searchCards(keyword?: string): Promise<CardResponse[]> {
   const qs = keyword ? `?keyword=${encodeURIComponent(keyword)}` : '';
   return request<CardResponse[]>(`/cards${qs}`);
 }
+
+export function createCard(
+  listId: number,
+  title: string,
+  description?: string,
+  dueDate?: string,
+): Promise<CardResponse> {
+  return request<CardResponse>(`/lists/${listId}/cards`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ title, description: description || null, dueDate: dueDate || null }),
+  });
+}

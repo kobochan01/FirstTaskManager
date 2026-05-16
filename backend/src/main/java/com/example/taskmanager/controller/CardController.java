@@ -2,6 +2,9 @@ package com.example.taskmanager.controller;
 
 import com.example.taskmanager.dto.ApiResponse;
 import com.example.taskmanager.dto.CardResponse;
+import com.example.taskmanager.dto.CreateCardRequest;
+import com.example.taskmanager.entity.Card;
+import com.example.taskmanager.entity.TaskList;
 import com.example.taskmanager.repository.CardRepository;
 import com.example.taskmanager.repository.TaskListRepository;
 import lombok.RequiredArgsConstructor;
@@ -9,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -54,5 +58,30 @@ public class CardController {
                 .map(CardResponse::new)
                 .toList();
         return ApiResponse.ok(cards);
+    }
+
+    @PostMapping("/api/lists/{listId}/cards")
+    public ApiResponse<CardResponse> createCard(
+            @PathVariable Long listId,
+            @RequestBody CreateCardRequest request) {
+        if (request.getTitle() == null || request.getTitle().isBlank()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Title is required");
+        }
+        TaskList taskList = taskListRepository.findById(listId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "List not found: " + listId));
+
+        int nextPosition = cardRepository.findByTaskListIdOrderByPosition(listId).size() + 1;
+
+        Card card = new Card();
+        card.setTaskList(taskList);
+        card.setTitle(request.getTitle().trim());
+        card.setDescription(request.getDescription());
+        card.setPosition(nextPosition);
+        if (request.getDueDate() != null && !request.getDueDate().isBlank()) {
+            card.setDueDate(LocalDateTime.parse(request.getDueDate()));
+        }
+
+        Card saved = cardRepository.save(card);
+        return ApiResponse.ok(new CardResponse(saved));
     }
 }
