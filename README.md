@@ -49,9 +49,11 @@ ReactとSpring Bootを用いたフルスタック開発、PostgreSQLによるデ
 |------|------|-----------|
 | 言語 | Java | 21 |
 | フレームワーク | Spring Boot | 3.3.5 |
+| ビルドツール | Maven (mvnw) | 3.9.15 |
 | ORM | Spring Data JPA + Hibernate | Spring Boot 3.3.5 同梱 |
 | データベース | PostgreSQL | 16 |
-| インフラ | Docker / docker-compose | — |
+| コンテナ | Docker | 29.4.3 |
+| コンテナ管理 | Docker Compose | 5.1.3 |
 
 ---
 
