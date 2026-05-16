@@ -57,11 +57,17 @@ chore/<issue番号>-<簡潔な英語説明>     # 設定・依存関係・雑務
 
 ## 技術スタック
 
-- **フロントエンド**: React + TypeScript
-- **バックエンド**: Java 21 + Spring Boot 3.3
-- **データベース**: PostgreSQL 16
-- **インフラ**: Docker / docker-compose
-- **ORM**: Spring Data JPA + Hibernate
+| 役割 | 技術 | バージョン |
+|------|------|-----------|
+| フロントエンド | React + TypeScript | React 19.2.6 / TypeScript 6.0.3 |
+| フロントエンドビルド | Vite | 8.0.13 |
+| ルーティング | React Router DOM | 7.15.1 |
+| バックエンド | Java + Spring Boot | Java 21 / Spring Boot 3.3.5 |
+| バックエンドビルド | Maven (mvnw) | 3.9.15 |
+| ORM | Spring Data JPA + Hibernate | Spring Boot 3.3.5 同梱 |
+| データベース | PostgreSQL | 16 |
+| コンテナ | Docker | 29.4.3 |
+| コンテナ管理 | Docker Compose | 5.1.3 |
 
 ## 開発環境起動
 
