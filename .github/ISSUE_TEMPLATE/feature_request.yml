@@ -1,0 +1,49 @@
+name: 機能追加
+description: 新しい機能の追加や既存機能の改善を提案する
+title: "[Feature] "
+labels: ["feature"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        機能追加のIssueです。作業を始める前にこのIssueを作成し、ブランチ名に番号を含めてください。
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: 概要
+      description: 追加・改善したい機能を簡潔に説明してください
+      placeholder: タスクカードにコメント機能を追加したい
+    validations:
+      required: true
+
+  - type: textarea
+    id: background
+    attributes:
+      label: 背景・目的
+      description: なぜこの機能が必要か、どんな問題を解決するかを説明してください
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance_criteria
+    attributes:
+      label: 完了条件
+      description: この機能が完成したと判断できる条件をリストアップしてください
+      placeholder: |
+        - [ ] カードにコメントを追加できる
+        - [ ] コメントの編集・削除ができる
+        - [ ] コメント一覧が表示される
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: 優先度
+      options:
+        - 高（ブロッカー）
+        - 中（次のスプリントで対応）
+        - 低（余裕があれば対応）
+    validations:
+      required: true

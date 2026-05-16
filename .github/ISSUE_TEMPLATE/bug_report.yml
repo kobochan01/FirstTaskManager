@@ -1,0 +1,58 @@
+name: バグ報告
+description: 不具合・エラーを報告する
+title: "[Bug] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        バグ報告のIssueです。修正作業を始める前にこのIssueを作成し、ブランチ名に番号を含めてください。
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: バグの概要
+      description: 何が起きているかを簡潔に説明してください
+      placeholder: タスクカードをドラッグするとエラーが発生する
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: 再現手順
+      description: バグを再現するための手順を記載してください
+      placeholder: |
+        1. ボード画面を開く
+        2. タスクカードをドラッグ開始する
+        3. エラーが発生する
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: 期待する動作
+      description: 正しく動作した場合に何が起きるべきかを説明してください
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: 実際の動作
+      description: 実際に何が起きているかを説明してください（エラーメッセージがあれば貼り付けてください）
+    validations:
+      required: true
+
+  - type: dropdown
+    id: severity
+    attributes:
+      label: 深刻度
+      options:
+        - Critical（サービス停止レベル）
+        - High（主要機能が使えない）
+        - Medium（一部機能に影響）
+        - Low（軽微な表示崩れ等）
+    validations:
+      required: true
