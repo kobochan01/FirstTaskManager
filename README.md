@@ -34,13 +34,24 @@ ReactとSpring Bootを用いたフルスタック開発、PostgreSQLによるデ
 
 ### フェーズ2：本実装（進行中）
 
-| 役割 | 技術 |
-|------|------|
-| フロントエンド | React + TypeScript |
-| バックエンド | Java 21 + Spring Boot 3.3 |
-| ORM | Spring Data JPA + Hibernate |
-| データベース | PostgreSQL 16 |
-| インフラ | Docker / docker-compose |
+#### フロントエンド
+
+| 役割 | 技術 | バージョン |
+|------|------|-----------|
+| UIフレームワーク | React | 19.2.6 |
+| 言語 | TypeScript | 6.0.3 |
+| ビルドツール | Vite | 8.0.13 |
+| ルーティング | React Router DOM | 7.15.1 |
+
+#### バックエンド
+
+| 役割 | 技術 | バージョン |
+|------|------|-----------|
+| 言語 | Java | 21 |
+| フレームワーク | Spring Boot | 3.3.5 |
+| ORM | Spring Data JPA + Hibernate | Spring Boot 3.3.5 同梱 |
+| データベース | PostgreSQL | 16 |
+| インフラ | Docker / docker-compose | — |
 
 ---
 
@@ -49,6 +60,7 @@ ReactとSpring Bootを用いたフルスタック開発、PostgreSQLによるデ
 ### 必要なもの
 
 - Docker Desktop
+- Node.js（npm）
 
 ### 1. DBの起動
 
@@ -83,6 +95,20 @@ cd backend
 |--------------|------|
 | `GET http://localhost:8080/api/health` | ヘルスチェック |
 | `GET http://localhost:8080/api/boards` | ボード一覧取得 |
+
+### 3. フロントエンドの起動
+
+```bash
+cd frontend
+npm install   # 初回のみ
+npm run dev
+```
+
+起動後、ブラウザで以下のURLにアクセスします。
+
+| URL | 内容 |
+|-----|------|
+| `http://localhost:5173` | フロントエンドUI |
 
 ---
 
