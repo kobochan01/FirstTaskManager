@@ -3,6 +3,7 @@ package com.example.taskmanager.controller;
 import com.example.taskmanager.dto.ApiResponse;
 import com.example.taskmanager.dto.BoardDetailResponse;
 import com.example.taskmanager.dto.CardResponse;
+import com.example.taskmanager.dto.CreateListRequest;
 import com.example.taskmanager.dto.TaskListResponse;
 import com.example.taskmanager.entity.Board;
 import com.example.taskmanager.entity.TaskList;
@@ -54,6 +55,27 @@ public class BoardController {
     public ApiResponse<Board> createBoard(@RequestBody Board board) {
         Board saved = boardRepository.save(board);
         return ApiResponse.ok(saved);
+    }
+
+    @PostMapping("/{boardId}/lists")
+    public ApiResponse<TaskListResponse> createList(
+            @PathVariable Long boardId,
+            @RequestBody CreateListRequest request) {
+        if (request.getName() == null || request.getName().isBlank()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Name is required");
+        }
+        Board board = boardRepository.findById(boardId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Board not found: " + boardId));
+
+        int nextPosition = taskListRepository.findByBoardIdOrderByPosition(boardId).size() + 1;
+
+        TaskList taskList = new TaskList();
+        taskList.setBoard(board);
+        taskList.setName(request.getName().trim());
+        taskList.setPosition(nextPosition);
+
+        TaskList saved = taskListRepository.save(taskList);
+        return ApiResponse.ok(new TaskListResponse(saved, List.of()));
     }
 
     private BoardDetailResponse toBoardDetail(Board board) {
