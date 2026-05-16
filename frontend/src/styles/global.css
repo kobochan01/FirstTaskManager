@@ -341,19 +341,21 @@ mark {
 }
 
 .add-list-btn {
-  background: rgba(255, 255, 255, 0.25);
-  border: none;
-  color: #fff;
+  background: #fff;
+  border: 2px dashed #b3bac5;
+  color: #5e6c84;
   font-size: 14px;
   padding: 10px 14px;
   border-radius: 8px;
   cursor: pointer;
   width: 100%;
   text-align: left;
-  transition: background 0.15s;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
 }
 .add-list-btn:hover {
-  background: rgba(255, 255, 255, 0.35);
+  background: #f4f5f7;
+  border-color: #0052cc;
+  color: #0052cc;
 }
 
 .add-list-form {
