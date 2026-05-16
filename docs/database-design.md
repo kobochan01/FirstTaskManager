@@ -25,7 +25,7 @@ erDiagram
         int list_id FK
         string title
         text description
-        date due_date
+        datetime due_date
         int position
         datetime created_at
         datetime updated_at
@@ -82,7 +82,7 @@ erDiagram
 | list_id | INT | FK → lists.id | 所属リストID |
 | title | VARCHAR(200) | NOT NULL | カードタイトル |
 | description | TEXT | NULL許容 | 説明文 |
-| due_date | DATE | NULL許容 | 期限日 |
+| due_date | DATETIME | NULL許容 | 期限日時 |
 | position | INT | NOT NULL | リスト内の表示順 |
 | created_at | DATETIME | NOT NULL | 作成日時 |
 | updated_at | DATETIME | NOT NULL | 更新日時 |
@@ -118,4 +118,5 @@ erDiagram
 ## 備考
 
 - `position` カラムはドラッグ＆ドロップによる並び替えの順序管理に使用する
-- フェーズ1（localStorage）では上記テーブル構造をJSONで再現し、フェーズ2でそのままDBに移行できるよう設計する
+- `due_date` は時刻まで保持するため `DATETIME`（Java側は `LocalDateTime`）として実装している
+- `labels`・`card_labels` テーブルは設計済みだが未実装
