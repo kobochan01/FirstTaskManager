@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { fetchBoardDetail } from '../api/client';
-import type { BoardDetailResponse } from '../types/api';
+import type { BoardDetailResponse, CardResponse } from '../types/api';
 import KanbanBoard from '../components/KanbanBoard';
 
 export default function BoardDetailPage() {
@@ -21,6 +21,18 @@ export default function BoardDetailPage() {
       .finally(() => setLoading(false));
   }, [boardId]);
 
+  const handleCardCreated = useCallback((listId: number, card: CardResponse) => {
+    setBoard((prev) => {
+      if (!prev) return prev;
+      return {
+        ...prev,
+        lists: prev.lists.map((list) =>
+          list.id === listId ? { ...list, cards: [...list.cards, card] } : list,
+        ),
+      };
+    });
+  }, []);
+
   return (
     <>
       <div className="board-header-bar">
@@ -30,7 +42,7 @@ export default function BoardDetailPage() {
 
       {loading && <p className="status-message" style={{ padding: '20px 24px' }}>読み込み中...</p>}
       {error && <p className="error-message" style={{ padding: '20px 24px' }}>{error}</p>}
-      {board && <KanbanBoard lists={board.lists} />}
+      {board && <KanbanBoard lists={board.lists} onCardCreated={handleCardCreated} />}
     </>
   );
 }
