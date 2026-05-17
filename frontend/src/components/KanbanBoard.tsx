@@ -9,7 +9,7 @@ interface Props {
   onCardCreated: (listId: number, card: CardResponse) => void;
   onListCreated: (list: TaskListResponse) => void;
   onCardClick: (card: CardResponse) => void;
-  onCardDropped: (cardId: number, fromListId: number, toListId: number) => void;
+  onCardDropped: (cardId: number, fromListId: number, toListId: number, position: number) => void;
 }
 
 export default function KanbanBoard({ boardId, lists, onCardCreated, onListCreated, onCardClick, onCardDropped }: Props) {

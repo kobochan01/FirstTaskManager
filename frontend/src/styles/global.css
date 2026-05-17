@@ -262,17 +262,38 @@ body {
 }
 .card:hover {
   box-shadow: 0 3px 8px rgba(0,0,0,0.18);
+  outline: 2px solid #b3d4ff;
 }
 
 .card-dragging {
-  opacity: 0.4;
+  opacity: 0.35;
   cursor: grabbing;
 }
 
 .list-drag-over {
-  background: #d0e8ff;
+  background: #e8f0fe;
   outline: 2px dashed #0052cc;
   outline-offset: -2px;
+}
+
+.drop-indicator {
+  height: 3px;
+  background: #0052cc;
+  border-radius: 2px;
+  margin: 2px 0;
+  position: relative;
+  pointer-events: none;
+}
+
+.drop-indicator::before {
+  content: '';
+  position: absolute;
+  left: -4px;
+  top: -4px;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: #0052cc;
 }
 
 .card-title {
