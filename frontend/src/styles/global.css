@@ -261,6 +261,7 @@ body {
   transition: box-shadow 0.15s;
 }
 .card:hover {
+  background: #ebf3ff;
   box-shadow: 0 3px 8px rgba(0,0,0,0.18);
   outline: 2px solid #b3d4ff;
 }
