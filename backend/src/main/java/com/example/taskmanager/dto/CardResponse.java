@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 public class CardResponse {
 
     private final Long id;
+    private final Long listId;
     private final String title;
     private final String description;
     private final LocalDateTime dueDate;
@@ -18,6 +19,7 @@ public class CardResponse {
 
     public CardResponse(Card card) {
         this.id = card.getId();
+        this.listId = card.getTaskList().getId();
         this.title = card.getTitle();
         this.description = card.getDescription();
         this.dueDate = card.getDueDate();

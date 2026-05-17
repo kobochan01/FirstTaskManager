@@ -12,6 +12,7 @@ export interface Board {
 
 export interface CardResponse {
   id: number;
+  listId: number;
   title: string;
   description: string | null;
   dueDate: string | null;

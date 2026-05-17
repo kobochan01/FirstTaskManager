@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { fetchBoardDetail } from '../api/client';
 import type { BoardDetailResponse, CardResponse, TaskListResponse } from '../types/api';
 import KanbanBoard from '../components/KanbanBoard';
+import CardDetailModal from '../components/CardDetailModal';
 
 export default function BoardDetailPage() {
   const { boardId } = useParams<{ boardId: string }>();
@@ -10,6 +11,7 @@ export default function BoardDetailPage() {
   const [board, setBoard] = useState<BoardDetailResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedCard, setSelectedCard] = useState<CardResponse | null>(null);
 
   useEffect(() => {
     if (!boardId) return;
@@ -40,6 +42,51 @@ export default function BoardDetailPage() {
     });
   }, []);
 
+  const handleCardClick = useCallback((card: CardResponse) => {
+    setSelectedCard(card);
+  }, []);
+
+  const handleCardSaved = useCallback((updatedCard: CardResponse) => {
+    setBoard((prev) => {
+      if (!prev) return prev;
+      return {
+        ...prev,
+        lists: prev.lists.map((list) =>
+          list.id === updatedCard.listId
+            ? { ...list, cards: list.cards.map((c) => (c.id === updatedCard.id ? updatedCard : c)) }
+            : list,
+        ),
+      };
+    });
+    setSelectedCard(updatedCard);
+  }, []);
+
+  const handleCardMoved = useCallback(
+    (cardId: number, fromListId: number, toListId: number, updatedCard: CardResponse) => {
+      setBoard((prev) => {
+        if (!prev) return prev;
+        return {
+          ...prev,
+          lists: prev.lists.map((list) => {
+            if (list.id === fromListId) {
+              return { ...list, cards: list.cards.filter((c) => c.id !== cardId) };
+            }
+            if (list.id === toListId) {
+              return { ...list, cards: [...list.cards, updatedCard] };
+            }
+            return list;
+          }),
+        };
+      });
+      setSelectedCard(updatedCard);
+    },
+    [],
+  );
+
+  const handleModalClose = useCallback(() => {
+    setSelectedCard(null);
+  }, []);
+
   return (
     <>
       <div className="board-header-bar">
@@ -55,6 +102,17 @@ export default function BoardDetailPage() {
           lists={board.lists}
           onCardCreated={handleCardCreated}
           onListCreated={handleListCreated}
+          onCardClick={handleCardClick}
+        />
+      )}
+
+      {selectedCard && board && (
+        <CardDetailModal
+          card={selectedCard}
+          lists={board.lists}
+          onSave={handleCardSaved}
+          onMove={handleCardMoved}
+          onClose={handleModalClose}
         />
       )}
     </>
