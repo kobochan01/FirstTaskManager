@@ -112,26 +112,21 @@ export default function BoardListPage() {
                 </div>
               ) : (
                 <Link to={`/boards/${board.id}`} className="board-card">
-                  <span
-                    className="board-card-name"
-                    onDoubleClick={(e) => {
-                      e.preventDefault();
-                      setEditingBoardId(board.id);
-                      setEditingName(board.name);
-                    }}
-                    title="ダブルクリックして編集"
-                  >
-                    {board.name}
-                  </span>
+                  <span className="board-card-name">{board.name}</span>
                 </Link>
               )}
-              <button
-                className="board-delete-btn"
-                onClick={() => handleDeleteBoard(board.id)}
-                aria-label="ボードを削除"
-              >
-                ×
-              </button>
+              <div className="board-card-actions">
+                <button
+                  className="board-edit-btn"
+                  onClick={(e) => { e.preventDefault(); setEditingBoardId(board.id); setEditingName(board.name); }}
+                  aria-label="ボード名を編集"
+                >✏</button>
+                <button
+                  className="board-delete-btn"
+                  onClick={() => handleDeleteBoard(board.id)}
+                  aria-label="ボードを削除"
+                >×</button>
+              </div>
             </div>
           ))}
         </div>
