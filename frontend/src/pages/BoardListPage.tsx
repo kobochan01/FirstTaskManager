@@ -25,6 +25,7 @@ export default function BoardListPage() {
     try {
       await deleteBoard(boardId);
       setBoards((prev) => prev.filter((b) => b.id !== boardId));
+      window.dispatchEvent(new Event('boards-updated'));
     } catch {
       setError('ボードの削除に失敗しました');
     }
@@ -52,6 +53,7 @@ export default function BoardListPage() {
       setBoards((prev) => [...prev, created]);
       setNewBoardName('');
       setShowForm(false);
+      window.dispatchEvent(new Event('boards-updated'));
     } catch {
       setError('ボードの作成に失敗しました');
     } finally {
