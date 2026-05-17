@@ -264,6 +264,17 @@ body {
   box-shadow: 0 3px 8px rgba(0,0,0,0.18);
 }
 
+.card-dragging {
+  opacity: 0.4;
+  cursor: grabbing;
+}
+
+.list-drag-over {
+  background: #d0e8ff;
+  outline: 2px dashed #0052cc;
+  outline-offset: -2px;
+}
+
 .card-title {
   font-size: 14px;
   color: #172b4d;

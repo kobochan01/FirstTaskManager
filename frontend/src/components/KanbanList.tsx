@@ -7,12 +7,14 @@ interface Props {
   list: TaskListResponse;
   onCardCreated: (listId: number, card: CardResponse) => void;
   onCardClick: (card: CardResponse) => void;
+  onCardDropped: (cardId: number, fromListId: number, toListId: number) => void;
 }
 
-export default function KanbanList({ list, onCardCreated, onCardClick }: Props) {
+export default function KanbanList({ list, onCardCreated, onCardClick, onCardDropped }: Props) {
   const [showForm, setShowForm] = useState(false);
   const [title, setTitle] = useState('');
   const [saving, setSaving] = useState(false);
+  const [dragOver, setDragOver] = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -33,8 +35,35 @@ export default function KanbanList({ list, onCardCreated, onCardClick }: Props) 
     setShowForm(false);
   }
 
+  function handleDragOver(e: React.DragEvent<HTMLDivElement>) {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    if (!dragOver) setDragOver(true);
+  }
+
+  function handleDragLeave(e: React.DragEvent<HTMLDivElement>) {
+    if (!e.currentTarget.contains(e.relatedTarget as Node)) {
+      setDragOver(false);
+    }
+  }
+
+  function handleDrop(e: React.DragEvent<HTMLDivElement>) {
+    e.preventDefault();
+    setDragOver(false);
+    const cardId = parseInt(e.dataTransfer.getData('cardId'), 10);
+    const fromListId = parseInt(e.dataTransfer.getData('sourceListId'), 10);
+    if (!isNaN(cardId) && !isNaN(fromListId)) {
+      onCardDropped(cardId, fromListId, list.id);
+    }
+  }
+
   return (
-    <div className="list">
+    <div
+      className={`list${dragOver ? ' list-drag-over' : ''}`}
+      onDragOver={handleDragOver}
+      onDragLeave={handleDragLeave}
+      onDrop={handleDrop}
+    >
       <div className="list-header">
         <span className="list-title">{list.name}</span>
       </div>
