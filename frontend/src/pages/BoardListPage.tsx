@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { fetchBoards, createBoard } from '../api/client';
+import { fetchBoards, createBoard, deleteBoard } from '../api/client';
 import type { Board } from '../types/api';
 
 export default function BoardListPage() {
@@ -17,6 +17,16 @@ export default function BoardListPage() {
       .catch(() => setError('ボードの読み込みに失敗しました'))
       .finally(() => setLoading(false));
   }, []);
+
+  async function handleDeleteBoard(boardId: number) {
+    if (!window.confirm('このボードとすべてのリスト・カードを削除しますか？')) return;
+    try {
+      await deleteBoard(boardId);
+      setBoards((prev) => prev.filter((b) => b.id !== boardId));
+    } catch {
+      setError('ボードの削除に失敗しました');
+    }
+  }
 
   async function handleCreate(e: React.FormEvent) {
     e.preventDefault();
@@ -69,9 +79,18 @@ export default function BoardListPage() {
       {!loading && !error && (
         <div className="board-grid">
           {boards.map((board) => (
-            <Link key={board.id} to={`/boards/${board.id}`} className="board-card">
-              <span className="board-card-name">{board.name}</span>
-            </Link>
+            <div key={board.id} className="board-card-wrapper">
+              <Link to={`/boards/${board.id}`} className="board-card">
+                <span className="board-card-name">{board.name}</span>
+              </Link>
+              <button
+                className="board-delete-btn"
+                onClick={() => handleDeleteBoard(board.id)}
+                aria-label="ボードを削除"
+              >
+                ×
+              </button>
+            </div>
           ))}
         </div>
       )}

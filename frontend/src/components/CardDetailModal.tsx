@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
 import type { CardResponse, TaskListResponse } from '../types/api';
-import { updateCard, moveCard } from '../api/client';
+import { updateCard, moveCard, deleteCard } from '../api/client';
 
 interface Props {
   card: CardResponse;
   lists: TaskListResponse[];
   onSave: (updated: CardResponse) => void;
   onMove: (cardId: number, fromListId: number, toListId: number, updated: CardResponse) => void;
+  onDelete: (cardId: number) => void;
   onClose: () => void;
 }
 
@@ -20,7 +21,7 @@ function toIsoString(datetimeLocal: string): string {
   return datetimeLocal + ':00';
 }
 
-export default function CardDetailModal({ card, lists, onSave, onMove, onClose }: Props) {
+export default function CardDetailModal({ card, lists, onSave, onMove, onDelete, onClose }: Props) {
   const [title, setTitle] = useState(card.title);
   const [description, setDescription] = useState(card.description ?? '');
   const [dueDate, setDueDate] = useState(toDatetimeLocal(card.dueDate));
@@ -35,6 +36,20 @@ export default function CardDetailModal({ card, lists, onSave, onMove, onClose }
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
   }, [onClose]);
+
+  async function handleDelete() {
+    if (!window.confirm('このカードを削除しますか？')) return;
+    setSaving(true);
+    try {
+      await deleteCard(card.id);
+      onDelete(card.id);
+      onClose();
+    } catch {
+      setError('削除に失敗しました。もう一度お試しください。');
+    } finally {
+      setSaving(false);
+    }
+  }
 
   async function handleSave() {
     if (!title.trim()) {
@@ -136,6 +151,10 @@ export default function CardDetailModal({ card, lists, onSave, onMove, onClose }
         </div>
 
         <div className="modal-footer">
+          <button className="btn btn-danger btn-sm" onClick={handleDelete} disabled={saving}>
+            削除
+          </button>
+          <div style={{ flex: 1 }} />
           <button
             className="btn btn-primary"
             onClick={handleSave}

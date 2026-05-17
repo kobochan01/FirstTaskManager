@@ -88,6 +88,15 @@ public class CardController {
         return ApiResponse.ok(new CardResponse(saved));
     }
 
+    @DeleteMapping("/api/cards/{id}")
+    public ApiResponse<Void> deleteCard(@PathVariable Long id) {
+        if (!cardRepository.existsById(id)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Card not found: " + id);
+        }
+        cardRepository.deleteById(id);
+        return ApiResponse.ok(null);
+    }
+
     @PutMapping("/api/cards/{id}")
     public ApiResponse<CardResponse> updateCard(
             @PathVariable Long id,
