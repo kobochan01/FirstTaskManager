@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -112,10 +113,47 @@ public class CardController {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Card not found: " + id));
         TaskList targetList = taskListRepository.findById(request.getTargetListId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "List not found: " + request.getTargetListId()));
-        int nextPosition = cardRepository.findByTaskListIdOrderByPosition(request.getTargetListId()).size() + 1;
+
+        Long sourceListId = card.getTaskList().getId();
+        Long targetListId = request.getTargetListId();
+        boolean sameList = sourceListId.equals(targetListId);
+
+        // Target list cards excluding the moving card (to get clean insertion slots)
+        List<Card> targetCards = new ArrayList<>(
+                cardRepository.findByTaskListIdOrderByPosition(targetListId)
+                        .stream()
+                        .filter(c -> !c.getId().equals(id))
+                        .toList()
+        );
+
+        int insertAt = (request.getPosition() == null || request.getPosition() > targetCards.size())
+                ? targetCards.size()
+                : Math.max(0, request.getPosition());
+
         card.setTaskList(targetList);
-        card.setPosition(nextPosition);
-        Card saved = cardRepository.save(card);
+        targetCards.add(insertAt, card);
+
+        // Reassign sequential 1-based positions to all cards in the target list
+        for (int i = 0; i < targetCards.size(); i++) {
+            targetCards.get(i).setPosition(i + 1);
+        }
+        cardRepository.saveAll(targetCards);
+
+        // Compact source list positions after removal (cross-list only)
+        if (!sameList) {
+            List<Card> sourceCards = new ArrayList<>(
+                    cardRepository.findByTaskListIdOrderByPosition(sourceListId)
+                            .stream()
+                            .filter(c -> !c.getId().equals(id))
+                            .toList()
+            );
+            for (int i = 0; i < sourceCards.size(); i++) {
+                sourceCards.get(i).setPosition(i + 1);
+            }
+            cardRepository.saveAll(sourceCards);
+        }
+
+        Card saved = cardRepository.findById(id).orElseThrow();
         return ApiResponse.ok(new CardResponse(saved));
     }
 }

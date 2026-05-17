@@ -16,6 +16,23 @@ export default function TaskCard({ card, onCardClick }: Props) {
     e.dataTransfer.setData('cardId', card.id.toString());
     e.dataTransfer.setData('sourceListId', card.listId.toString());
     e.dataTransfer.effectAllowed = 'move';
+
+    // 青いゴースト画像でカーソルと明確に区別できるようにする
+    const ghost = document.createElement('div');
+    ghost.textContent = card.title;
+    ghost.setAttribute('style', [
+      'position:absolute', 'top:-9999px', 'left:-9999px',
+      'padding:7px 12px', 'background:#0052cc', 'color:#fff',
+      'border-radius:6px', 'font-size:13px', 'font-weight:600',
+      'max-width:220px', 'white-space:nowrap',
+      'overflow:hidden', 'text-overflow:ellipsis',
+      'box-shadow:0 4px 12px rgba(0,82,204,0.45)',
+      'pointer-events:none',
+    ].join(';'));
+    document.body.appendChild(ghost);
+    e.dataTransfer.setDragImage(ghost, 12, 20);
+    setTimeout(() => document.body.removeChild(ghost), 0);
+
     setDragging(true);
   }
 

@@ -72,10 +72,10 @@ export function updateCard(
   });
 }
 
-export function moveCard(cardId: number, targetListId: number): Promise<CardResponse> {
+export function moveCard(cardId: number, targetListId: number, position?: number): Promise<CardResponse> {
   return request<CardResponse>(`/cards/${cardId}/move`, {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ targetListId }),
+    body: JSON.stringify({ targetListId, position: position ?? null }),
   });
 }

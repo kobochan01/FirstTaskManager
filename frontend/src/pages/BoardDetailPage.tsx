@@ -83,23 +83,33 @@ export default function BoardDetailPage() {
     [],
   );
 
-  const handleCardDropped = useCallback(async (cardId: number, fromListId: number, toListId: number) => {
-    if (fromListId === toListId) return;
+  const handleCardDropped = useCallback(async (cardId: number, fromListId: number, toListId: number, position: number) => {
     try {
-      const updatedCard = await moveCard(cardId, toListId);
+      const updatedCard = await moveCard(cardId, toListId, position);
       setBoard((prev) => {
         if (!prev) return prev;
+        const sameList = fromListId === toListId;
         return {
           ...prev,
           lists: prev.lists.map((list) => {
+            if (sameList && list.id === toListId) {
+              // 同一リスト内並べ替え: 古い位置から除いて新しい位置に挿入
+              const without = list.cards.filter((c) => c.id !== cardId);
+              without.splice(position, 0, updatedCard);
+              return { ...list, cards: without };
+            }
             if (list.id === fromListId) return { ...list, cards: list.cards.filter((c) => c.id !== cardId) };
-            if (list.id === toListId) return { ...list, cards: [...list.cards, updatedCard] };
+            if (list.id === toListId) {
+              const cards = [...list.cards];
+              cards.splice(position, 0, updatedCard);
+              return { ...list, cards };
+            }
             return list;
           }),
         };
       });
     } catch {
-      // API失敗時は何もしない（UIは変化しない）
+      // API失敗時はUIを変化させない
     }
   }, []);
 

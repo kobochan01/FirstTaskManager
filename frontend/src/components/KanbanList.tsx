@@ -7,7 +7,7 @@ interface Props {
   list: TaskListResponse;
   onCardCreated: (listId: number, card: CardResponse) => void;
   onCardClick: (card: CardResponse) => void;
-  onCardDropped: (cardId: number, fromListId: number, toListId: number) => void;
+  onCardDropped: (cardId: number, fromListId: number, toListId: number, position: number) => void;
 }
 
 export default function KanbanList({ list, onCardCreated, onCardClick, onCardDropped }: Props) {
@@ -15,6 +15,7 @@ export default function KanbanList({ list, onCardCreated, onCardClick, onCardDro
   const [title, setTitle] = useState('');
   const [saving, setSaving] = useState(false);
   const [dragOver, setDragOver] = useState(false);
+  const [dropIndex, setDropIndex] = useState<number>(list.cards.length);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -35,15 +36,28 @@ export default function KanbanList({ list, onCardCreated, onCardClick, onCardDro
     setShowForm(false);
   }
 
+  function computeDropIndex(e: React.DragEvent<HTMLDivElement>): number {
+    const listCardsEl = e.currentTarget.querySelector('.list-cards');
+    if (!listCardsEl) return list.cards.length;
+    const cardEls = Array.from(listCardsEl.querySelectorAll('.card'));
+    for (let i = 0; i < cardEls.length; i++) {
+      const rect = cardEls[i].getBoundingClientRect();
+      if (e.clientY < rect.top + rect.height / 2) return i;
+    }
+    return cardEls.length;
+  }
+
   function handleDragOver(e: React.DragEvent<HTMLDivElement>) {
     e.preventDefault();
     e.dataTransfer.dropEffect = 'move';
     if (!dragOver) setDragOver(true);
+    setDropIndex(computeDropIndex(e));
   }
 
   function handleDragLeave(e: React.DragEvent<HTMLDivElement>) {
     if (!e.currentTarget.contains(e.relatedTarget as Node)) {
       setDragOver(false);
+      setDropIndex(list.cards.length);
     }
   }
 
@@ -52,9 +66,19 @@ export default function KanbanList({ list, onCardCreated, onCardClick, onCardDro
     setDragOver(false);
     const cardId = parseInt(e.dataTransfer.getData('cardId'), 10);
     const fromListId = parseInt(e.dataTransfer.getData('sourceListId'), 10);
-    if (!isNaN(cardId) && !isNaN(fromListId)) {
-      onCardDropped(cardId, fromListId, list.id);
+    if (isNaN(cardId) || isNaN(fromListId)) return;
+
+    let position = computeDropIndex(e);
+
+    // 同一リスト内での並べ替えの場合、移動元のカードを除いた後のインデックスに補正する
+    if (fromListId === list.id) {
+      const sourceIndex = list.cards.findIndex((c) => c.id === cardId);
+      if (sourceIndex !== -1 && sourceIndex < position) {
+        position -= 1;
+      }
     }
+
+    onCardDropped(cardId, fromListId, list.id, position);
   }
 
   return (
@@ -68,8 +92,12 @@ export default function KanbanList({ list, onCardCreated, onCardClick, onCardDro
         <span className="list-title">{list.name}</span>
       </div>
       <div className="list-cards">
-        {list.cards.map((card) => (
-          <TaskCard key={card.id} card={card} onCardClick={onCardClick} />
+        {dragOver && dropIndex === 0 && <div className="drop-indicator" />}
+        {list.cards.map((card, index) => (
+          <div key={card.id}>
+            <TaskCard card={card} onCardClick={onCardClick} />
+            {dragOver && dropIndex === index + 1 && <div className="drop-indicator" />}
+          </div>
         ))}
       </div>
 
