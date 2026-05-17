@@ -91,3 +91,27 @@ export async function deleteList(boardId: number, listId: number): Promise<void>
 export async function deleteBoard(boardId: number): Promise<void> {
   await request<null>(`/boards/${boardId}`, { method: 'DELETE' });
 }
+
+export function updateBoard(boardId: number, name: string): Promise<Board> {
+  return request<Board>(`/boards/${boardId}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name }),
+  });
+}
+
+export function updateList(boardId: number, listId: number, name: string): Promise<TaskListResponse> {
+  return request<TaskListResponse>(`/boards/${boardId}/lists/${listId}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name }),
+  });
+}
+
+export function moveList(boardId: number, listId: number, position: number): Promise<TaskListResponse> {
+  return request<TaskListResponse>(`/boards/${boardId}/lists/${listId}/move`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ position }),
+  });
+}

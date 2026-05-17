@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import type { CardResponse, TaskListResponse } from '../types/api';
-import { createCard, deleteList } from '../api/client';
+import { createCard, deleteList, updateList } from '../api/client';
 import TaskCard from './TaskCard';
 
 interface Props {
@@ -10,14 +10,18 @@ interface Props {
   onCardClick: (card: CardResponse) => void;
   onCardDropped: (cardId: number, fromListId: number, toListId: number, position: number) => void;
   onListDeleted: (listId: number) => void;
+  onListRenamed: (listId: number, newName: string) => void;
 }
 
-export default function KanbanList({ boardId, list, onCardCreated, onCardClick, onCardDropped, onListDeleted }: Props) {
+export default function KanbanList({ boardId, list, onCardCreated, onCardClick, onCardDropped, onListDeleted, onListRenamed }: Props) {
   const [showForm, setShowForm] = useState(false);
   const [title, setTitle] = useState('');
   const [saving, setSaving] = useState(false);
   const [dragOver, setDragOver] = useState(false);
   const [dropIndex, setDropIndex] = useState<number>(list.cards.length);
+  const [editingName, setEditingName] = useState(false);
+  const [nameDraft, setNameDraft] = useState('');
+  const [isDragging, setIsDragging] = useState(false);
 
   async function handleDeleteList() {
     if (!window.confirm('このリストとすべてのカードを削除しますか？')) return;
@@ -26,6 +30,18 @@ export default function KanbanList({ boardId, list, onCardCreated, onCardClick, 
       onListDeleted(list.id);
     } catch {
       // エラー時は何もしない（UIを変化させない）
+    }
+  }
+
+  async function handleSaveListName() {
+    const trimmed = nameDraft.trim();
+    setEditingName(false);
+    if (!trimmed || trimmed === list.name) return;
+    try {
+      await updateList(boardId, list.id, trimmed);
+      onListRenamed(list.id, trimmed);
+    } catch {
+      // エラー時は変更しない
     }
   }
 
@@ -60,6 +76,7 @@ export default function KanbanList({ boardId, list, onCardCreated, onCardClick, 
   }
 
   function handleDragOver(e: React.DragEvent<HTMLDivElement>) {
+    if (e.dataTransfer.types.includes('listid')) return;
     e.preventDefault();
     e.dataTransfer.dropEffect = 'move';
     if (!dragOver) setDragOver(true);
@@ -67,6 +84,7 @@ export default function KanbanList({ boardId, list, onCardCreated, onCardClick, 
   }
 
   function handleDragLeave(e: React.DragEvent<HTMLDivElement>) {
+    if (e.dataTransfer.types.includes('listid')) return;
     if (!e.currentTarget.contains(e.relatedTarget as Node)) {
       setDragOver(false);
       setDropIndex(list.cards.length);
@@ -74,6 +92,7 @@ export default function KanbanList({ boardId, list, onCardCreated, onCardClick, 
   }
 
   function handleDrop(e: React.DragEvent<HTMLDivElement>) {
+    if (e.dataTransfer.types.includes('listid')) return;
     e.preventDefault();
     setDragOver(false);
     const cardId = parseInt(e.dataTransfer.getData('cardId'), 10);
@@ -95,13 +114,44 @@ export default function KanbanList({ boardId, list, onCardCreated, onCardClick, 
 
   return (
     <div
-      className={`list${dragOver ? ' list-drag-over' : ''}`}
+      className={`list${dragOver ? ' list-drag-over' : ''}${isDragging ? ' list-dragging' : ''}`}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
     >
-      <div className="list-header">
-        <span className="list-title">{list.name}</span>
+      <div
+        className="list-header"
+        draggable
+        onDragStart={(e) => {
+          e.dataTransfer.setData('listId', list.id.toString());
+          e.dataTransfer.effectAllowed = 'move';
+          setIsDragging(true);
+        }}
+        onDragEnd={() => setIsDragging(false)}
+      >
+        {editingName ? (
+          <input
+            className="inline-edit-input list-title-input"
+            value={nameDraft}
+            onChange={(e) => setNameDraft(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') handleSaveListName();
+              if (e.key === 'Escape') setEditingName(false);
+            }}
+            onBlur={handleSaveListName}
+            autoFocus
+            draggable={false}
+            onMouseDown={(e) => e.stopPropagation()}
+          />
+        ) : (
+          <span
+            className="list-title"
+            onClick={() => { setNameDraft(list.name); setEditingName(true); }}
+            title="クリックして編集"
+          >
+            {list.name}
+          </span>
+        )}
         <button className="list-delete-btn" onClick={handleDeleteList} aria-label="リストを削除">×</button>
       </div>
       <div className="list-cards">

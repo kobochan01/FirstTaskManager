@@ -1,18 +1,20 @@
 import { useState, useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { searchCards } from '../api/client';
 import type { CardResponse } from '../types/api';
 import SearchResultCard from '../components/SearchResultCard';
 
 export default function SearchResultsPage() {
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   const keyword = searchParams.get('q') ?? '';
   const [cards, setCards] = useState<CardResponse[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     setLoading(true);
+    setCards([]);
     setError(null);
     searchCards(keyword || undefined)
       .then(setCards)
@@ -27,7 +29,10 @@ export default function SearchResultsPage() {
   return (
     <main className="main">
       <div className="page-header">
-        <h2 className="page-title">{loading ? '検索中...' : pageTitle}</h2>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <button className="btn-back" onClick={() => navigate(-1)}>← 戻る</button>
+          <h2 className="page-title">{loading ? '検索中...' : pageTitle}</h2>
+        </div>
       </div>
 
       {error && <p className="error-message">{error}</p>}

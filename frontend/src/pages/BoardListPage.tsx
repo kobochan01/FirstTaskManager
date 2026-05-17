@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { fetchBoards, createBoard, deleteBoard } from '../api/client';
+import { fetchBoards, createBoard, deleteBoard, updateBoard } from '../api/client';
 import type { Board } from '../types/api';
 
 export default function BoardListPage() {
@@ -10,6 +10,8 @@ export default function BoardListPage() {
   const [showForm, setShowForm] = useState(false);
   const [newBoardName, setNewBoardName] = useState('');
   const [saving, setSaving] = useState(false);
+  const [editingBoardId, setEditingBoardId] = useState<number | null>(null);
+  const [editingName, setEditingName] = useState('');
 
   useEffect(() => {
     fetchBoards()
@@ -25,6 +27,18 @@ export default function BoardListPage() {
       setBoards((prev) => prev.filter((b) => b.id !== boardId));
     } catch {
       setError('ボードの削除に失敗しました');
+    }
+  }
+
+  async function handleSaveBoardName(boardId: number) {
+    const trimmed = editingName.trim();
+    setEditingBoardId(null);
+    if (!trimmed) return;
+    try {
+      const updated = await updateBoard(boardId, trimmed);
+      setBoards((prev) => prev.map((b) => b.id === boardId ? updated : b));
+    } catch {
+      setError('ボード名の更新に失敗しました');
     }
   }
 
@@ -80,9 +94,35 @@ export default function BoardListPage() {
         <div className="board-grid">
           {boards.map((board) => (
             <div key={board.id} className="board-card-wrapper">
-              <Link to={`/boards/${board.id}`} className="board-card">
-                <span className="board-card-name">{board.name}</span>
-              </Link>
+              {editingBoardId === board.id ? (
+                <div className="board-card">
+                  <input
+                    className="inline-edit-input"
+                    value={editingName}
+                    onChange={(e) => setEditingName(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') handleSaveBoardName(board.id);
+                      if (e.key === 'Escape') setEditingBoardId(null);
+                    }}
+                    onBlur={() => handleSaveBoardName(board.id)}
+                    autoFocus
+                  />
+                </div>
+              ) : (
+                <Link to={`/boards/${board.id}`} className="board-card">
+                  <span
+                    className="board-card-name"
+                    onDoubleClick={(e) => {
+                      e.preventDefault();
+                      setEditingBoardId(board.id);
+                      setEditingName(board.name);
+                    }}
+                    title="ダブルクリックして編集"
+                  >
+                    {board.name}
+                  </span>
+                </Link>
+              )}
               <button
                 className="board-delete-btn"
                 onClick={() => handleDeleteBoard(board.id)}

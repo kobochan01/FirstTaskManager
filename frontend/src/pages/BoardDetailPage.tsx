@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { fetchBoardDetail, moveCard } from '../api/client';
+import { fetchBoardDetail, moveCard, updateBoard, moveList } from '../api/client';
 import type { BoardDetailResponse, CardResponse, TaskListResponse } from '../types/api';
 import KanbanBoard from '../components/KanbanBoard';
 import CardDetailModal from '../components/CardDetailModal';
@@ -12,6 +12,8 @@ export default function BoardDetailPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedCard, setSelectedCard] = useState<CardResponse | null>(null);
+  const [editingBoardName, setEditingBoardName] = useState(false);
+  const [boardNameDraft, setBoardNameDraft] = useState('');
 
   useEffect(() => {
     if (!boardId) return;
@@ -138,11 +140,67 @@ export default function BoardDetailPage() {
     setSelectedCard(null);
   }, []);
 
+  async function handleSaveBoardName() {
+    const trimmed = boardNameDraft.trim();
+    setEditingBoardName(false);
+    if (!trimmed || trimmed === board!.name) return;
+    try {
+      const updated = await updateBoard(Number(boardId), trimmed);
+      setBoard((prev) => prev ? { ...prev, name: updated.name } : prev);
+    } catch {
+      // エラー時は変更なし
+    }
+  }
+
+  const handleListRenamed = useCallback((listId: number, newName: string) => {
+    setBoard((prev) => {
+      if (!prev) return prev;
+      return {
+        ...prev,
+        lists: prev.lists.map((l) => l.id === listId ? { ...l, name: newName } : l),
+      };
+    });
+  }, []);
+
+  const handleListMoved = useCallback(async (listId: number, position: number) => {
+    if (!board) return;
+    try {
+      await moveList(board.id, listId, position);
+      const refreshed = await fetchBoardDetail(board.id);
+      setBoard(refreshed);
+    } catch {
+      // エラー時は変更なし
+    }
+  }, [board]);
+
   return (
     <>
       <div className="board-header-bar">
         <button className="btn-back" onClick={() => navigate('/')}>← 戻る</button>
-        {board && <span className="board-header-name">{board.name}</span>}
+        {board && (
+          editingBoardName ? (
+            <input
+              className="inline-edit-input board-name-edit-input"
+              value={boardNameDraft}
+              onChange={(e) => setBoardNameDraft(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') handleSaveBoardName();
+                if (e.key === 'Escape') setEditingBoardName(false);
+              }}
+              onBlur={handleSaveBoardName}
+              autoFocus
+            />
+          ) : (
+            <span
+              className="board-header-name"
+              onClick={() => { setBoardNameDraft(board.name); setEditingBoardName(true); }}
+              title="クリックして編集"
+              style={{ cursor: 'pointer' }}
+            >
+              {board.name}
+            </span>
+          )
+        )}
       </div>
 
       {loading && <p className="status-message" style={{ padding: '20px 24px' }}>読み込み中...</p>}
@@ -156,6 +214,8 @@ export default function BoardDetailPage() {
           onCardClick={handleCardClick}
           onCardDropped={handleCardDropped}
           onListDeleted={handleListDeleted}
+          onListRenamed={handleListRenamed}
+          onListMoved={handleListMoved}
         />
       )}
 
