@@ -331,10 +331,30 @@ body {
   display: inline-block;
 }
 
-.board-delete-btn {
+.board-card-actions {
   position: absolute;
   top: 6px;
   right: 6px;
+  display: flex;
+  gap: 2px;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+.board-card-wrapper:hover .board-card-actions { opacity: 1; }
+
+.board-edit-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 13px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  transition: background 0.15s, color 0.15s;
+}
+.board-edit-btn:hover { background: var(--accent); color: #fff; }
+
+.board-delete-btn {
   background: transparent;
   border: none;
   color: var(--text-muted);
@@ -342,10 +362,8 @@ body {
   font-size: 16px;
   padding: 2px 6px;
   border-radius: 4px;
-  opacity: 0;
-  transition: opacity 0.15s, background 0.15s, color 0.15s;
+  transition: background 0.15s, color 0.15s;
 }
-.board-card-wrapper:hover .board-delete-btn { opacity: 1; }
 .board-delete-btn:hover { background: var(--danger); color: #fff; }
 
 /* ---- ボード詳細 ---- */
@@ -404,6 +422,29 @@ body {
   letter-spacing: 0.05em;
 }
 
+.list-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex-shrink: 0;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+.list:hover .list-header-actions { opacity: 1; }
+
+.list-edit-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 13px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  line-height: 1;
+  transition: background 0.15s, color 0.15s;
+}
+.list-edit-btn:hover { background: var(--accent); color: #fff; }
+
 .list-delete-btn {
   background: transparent;
   border: none;
@@ -413,10 +454,8 @@ body {
   padding: 2px 6px;
   border-radius: 4px;
   line-height: 1;
-  opacity: 0;
-  transition: opacity 0.15s, background 0.15s, color 0.15s;
+  transition: background 0.15s, color 0.15s;
 }
-.list:hover .list-delete-btn { opacity: 1; }
 .list-delete-btn:hover { background: var(--danger); color: #fff; }
 
 .list-cards {

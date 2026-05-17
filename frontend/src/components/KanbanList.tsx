@@ -144,15 +144,16 @@ export default function KanbanList({ boardId, list, onCardCreated, onCardClick, 
             onMouseDown={(e) => e.stopPropagation()}
           />
         ) : (
-          <span
-            className="list-title"
-            onClick={() => { setNameDraft(list.name); setEditingName(true); }}
-            title="クリックして編集"
-          >
-            {list.name}
-          </span>
+          <span className="list-title">{list.name}</span>
         )}
-        <button className="list-delete-btn" onClick={handleDeleteList} aria-label="リストを削除">×</button>
+        <div className="list-header-actions">
+          <button
+            className="list-edit-btn"
+            onClick={(e) => { e.stopPropagation(); setNameDraft(list.name); setEditingName(true); }}
+            aria-label="リスト名を編集"
+          >✏</button>
+          <button className="list-delete-btn" onClick={handleDeleteList} aria-label="リストを削除">×</button>
+        </div>
       </div>
       <div className="list-cards">
         {dragOver && dropIndex === 0 && <div className="drop-indicator" />}
