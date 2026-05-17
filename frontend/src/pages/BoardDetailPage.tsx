@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { fetchBoardDetail } from '../api/client';
+import { fetchBoardDetail, moveCard } from '../api/client';
 import type { BoardDetailResponse, CardResponse, TaskListResponse } from '../types/api';
 import KanbanBoard from '../components/KanbanBoard';
 import CardDetailModal from '../components/CardDetailModal';
@@ -83,6 +83,26 @@ export default function BoardDetailPage() {
     [],
   );
 
+  const handleCardDropped = useCallback(async (cardId: number, fromListId: number, toListId: number) => {
+    if (fromListId === toListId) return;
+    try {
+      const updatedCard = await moveCard(cardId, toListId);
+      setBoard((prev) => {
+        if (!prev) return prev;
+        return {
+          ...prev,
+          lists: prev.lists.map((list) => {
+            if (list.id === fromListId) return { ...list, cards: list.cards.filter((c) => c.id !== cardId) };
+            if (list.id === toListId) return { ...list, cards: [...list.cards, updatedCard] };
+            return list;
+          }),
+        };
+      });
+    } catch {
+      // API失敗時は何もしない（UIは変化しない）
+    }
+  }, []);
+
   const handleModalClose = useCallback(() => {
     setSelectedCard(null);
   }, []);
@@ -103,6 +123,7 @@ export default function BoardDetailPage() {
           onCardCreated={handleCardCreated}
           onListCreated={handleListCreated}
           onCardClick={handleCardClick}
+          onCardDropped={handleCardDropped}
         />
       )}
 

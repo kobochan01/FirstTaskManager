@@ -9,9 +9,10 @@ interface Props {
   onCardCreated: (listId: number, card: CardResponse) => void;
   onListCreated: (list: TaskListResponse) => void;
   onCardClick: (card: CardResponse) => void;
+  onCardDropped: (cardId: number, fromListId: number, toListId: number) => void;
 }
 
-export default function KanbanBoard({ boardId, lists, onCardCreated, onListCreated, onCardClick }: Props) {
+export default function KanbanBoard({ boardId, lists, onCardCreated, onListCreated, onCardClick, onCardDropped }: Props) {
   const sorted = [...lists].sort((a, b) => a.position - b.position);
   const [showForm, setShowForm] = useState(false);
   const [name, setName] = useState('');
@@ -39,7 +40,7 @@ export default function KanbanBoard({ boardId, lists, onCardCreated, onListCreat
   return (
     <div className="board-main">
       {sorted.map((list) => (
-        <KanbanList key={list.id} list={list} onCardCreated={onCardCreated} onCardClick={onCardClick} />
+        <KanbanList key={list.id} list={list} onCardCreated={onCardCreated} onCardClick={onCardClick} onCardDropped={onCardDropped} />
       ))}
 
       <div className="add-list-column">
