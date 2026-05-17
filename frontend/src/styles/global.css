@@ -583,3 +583,56 @@ mark {
   padding: 0;
   font-size: 13px;
 }
+
+/* ---- インライン編集 ---- */
+.inline-edit-input {
+  background: #fff;
+  border: 2px solid #0052cc;
+  border-radius: 4px;
+  font-size: inherit;
+  font-weight: inherit;
+  color: inherit;
+  padding: 2px 6px;
+  outline: none;
+  width: 100%;
+  min-width: 80px;
+}
+
+.board-name-edit-input {
+  font-size: 17px;
+  font-weight: 700;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.7);
+  max-width: 320px;
+}
+
+.list-title-input {
+  font-size: 14px;
+  font-weight: 700;
+  color: #172b4d;
+  flex: 1;
+}
+
+/* ---- リストのドラッグ ---- */
+.list-header {
+  cursor: grab;
+}
+
+.list-header:active {
+  cursor: grabbing;
+}
+
+.list-dragging {
+  opacity: 0.4;
+}
+
+/* ---- リスト列ドロップインジケーター ---- */
+.list-drop-indicator {
+  width: 3px;
+  min-height: 100px;
+  background: #0052cc;
+  border-radius: 2px;
+  flex-shrink: 0;
+  align-self: stretch;
+}
