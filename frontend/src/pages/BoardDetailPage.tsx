@@ -46,6 +46,27 @@ export default function BoardDetailPage() {
     setSelectedCard(card);
   }, []);
 
+  const handleCardDeleted = useCallback((cardId: number) => {
+    setBoard((prev) => {
+      if (!prev) return prev;
+      return {
+        ...prev,
+        lists: prev.lists.map((list) => ({
+          ...list,
+          cards: list.cards.filter((c) => c.id !== cardId),
+        })),
+      };
+    });
+    setSelectedCard(null);
+  }, []);
+
+  const handleListDeleted = useCallback((listId: number) => {
+    setBoard((prev) => {
+      if (!prev) return prev;
+      return { ...prev, lists: prev.lists.filter((l) => l.id !== listId) };
+    });
+  }, []);
+
   const handleCardSaved = useCallback((updatedCard: CardResponse) => {
     setBoard((prev) => {
       if (!prev) return prev;
@@ -134,6 +155,7 @@ export default function BoardDetailPage() {
           onListCreated={handleListCreated}
           onCardClick={handleCardClick}
           onCardDropped={handleCardDropped}
+          onListDeleted={handleListDeleted}
         />
       )}
 
@@ -143,6 +165,7 @@ export default function BoardDetailPage() {
           lists={board.lists}
           onSave={handleCardSaved}
           onMove={handleCardMoved}
+          onDelete={handleCardDeleted}
           onClose={handleModalClose}
         />
       )}

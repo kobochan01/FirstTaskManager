@@ -12,6 +12,7 @@ import com.example.taskmanager.repository.CardRepository;
 import com.example.taskmanager.repository.TaskListRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -55,6 +56,34 @@ public class BoardController {
     public ApiResponse<Board> createBoard(@RequestBody Board board) {
         Board saved = boardRepository.save(board);
         return ApiResponse.ok(saved);
+    }
+
+    @DeleteMapping("/{id}")
+    @Transactional
+    public ApiResponse<Void> deleteBoard(@PathVariable Long id) {
+        if (!boardRepository.existsById(id)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Board not found: " + id);
+        }
+        List<TaskList> lists = taskListRepository.findByBoardIdOrderByPosition(id);
+        for (TaskList list : lists) {
+            cardRepository.deleteAll(cardRepository.findByTaskListIdOrderByPosition(list.getId()));
+        }
+        taskListRepository.deleteAll(lists);
+        boardRepository.deleteById(id);
+        return ApiResponse.ok(null);
+    }
+
+    @DeleteMapping("/{boardId}/lists/{listId}")
+    @Transactional
+    public ApiResponse<Void> deleteList(@PathVariable Long boardId, @PathVariable Long listId) {
+        TaskList list = taskListRepository.findById(listId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "List not found: " + listId));
+        if (!list.getBoard().getId().equals(boardId)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "List not found in board");
+        }
+        cardRepository.deleteAll(cardRepository.findByTaskListIdOrderByPosition(listId));
+        taskListRepository.deleteById(listId);
+        return ApiResponse.ok(null);
     }
 
     @PostMapping("/{boardId}/lists")

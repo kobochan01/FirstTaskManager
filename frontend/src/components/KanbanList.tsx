@@ -1,21 +1,33 @@
 import { useState } from 'react';
 import type { CardResponse, TaskListResponse } from '../types/api';
-import { createCard } from '../api/client';
+import { createCard, deleteList } from '../api/client';
 import TaskCard from './TaskCard';
 
 interface Props {
+  boardId: number;
   list: TaskListResponse;
   onCardCreated: (listId: number, card: CardResponse) => void;
   onCardClick: (card: CardResponse) => void;
   onCardDropped: (cardId: number, fromListId: number, toListId: number, position: number) => void;
+  onListDeleted: (listId: number) => void;
 }
 
-export default function KanbanList({ list, onCardCreated, onCardClick, onCardDropped }: Props) {
+export default function KanbanList({ boardId, list, onCardCreated, onCardClick, onCardDropped, onListDeleted }: Props) {
   const [showForm, setShowForm] = useState(false);
   const [title, setTitle] = useState('');
   const [saving, setSaving] = useState(false);
   const [dragOver, setDragOver] = useState(false);
   const [dropIndex, setDropIndex] = useState<number>(list.cards.length);
+
+  async function handleDeleteList() {
+    if (!window.confirm('このリストとすべてのカードを削除しますか？')) return;
+    try {
+      await deleteList(boardId, list.id);
+      onListDeleted(list.id);
+    } catch {
+      // エラー時は何もしない（UIを変化させない）
+    }
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -90,6 +102,7 @@ export default function KanbanList({ list, onCardCreated, onCardClick, onCardDro
     >
       <div className="list-header">
         <span className="list-title">{list.name}</span>
+        <button className="list-delete-btn" onClick={handleDeleteList} aria-label="リストを削除">×</button>
       </div>
       <div className="list-cards">
         {dragOver && dropIndex === 0 && <div className="drop-indicator" />}

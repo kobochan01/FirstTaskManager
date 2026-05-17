@@ -79,3 +79,15 @@ export function moveCard(cardId: number, targetListId: number, position?: number
     body: JSON.stringify({ targetListId, position: position ?? null }),
   });
 }
+
+export async function deleteCard(cardId: number): Promise<void> {
+  await request<null>(`/cards/${cardId}`, { method: 'DELETE' });
+}
+
+export async function deleteList(boardId: number, listId: number): Promise<void> {
+  await request<null>(`/boards/${boardId}/lists/${listId}`, { method: 'DELETE' });
+}
+
+export async function deleteBoard(boardId: number): Promise<void> {
+  await request<null>(`/boards/${boardId}`, { method: 'DELETE' });
+}

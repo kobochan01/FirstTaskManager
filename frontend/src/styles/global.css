@@ -135,6 +135,12 @@ body {
   font-size: 13px;
 }
 
+.btn-danger {
+  background: #de350b;
+  color: #fff;
+}
+.btn-danger:hover { background: #bf2600; }
+
 .btn:disabled {
   opacity: 0.4;
   cursor: not-allowed;
@@ -196,6 +202,28 @@ body {
   word-break: break-word;
 }
 
+.board-card-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.board-delete-btn {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  background: transparent;
+  border: none;
+  color: #5e6c84;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  opacity: 0;
+  transition: opacity 0.15s, background 0.15s, color 0.15s;
+}
+.board-card-wrapper:hover .board-delete-btn { opacity: 1; }
+.board-delete-btn:hover { background: #de350b; color: #fff; }
+
 /* ---- ボード詳細 ---- */
 .board-header-bar {
   background: rgba(0,0,0,0.15);
@@ -244,6 +272,21 @@ body {
   font-weight: 700;
   color: #172b4d;
 }
+
+.list-delete-btn {
+  background: transparent;
+  border: none;
+  color: #5e6c84;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  line-height: 1;
+  opacity: 0;
+  transition: opacity 0.15s, background 0.15s, color 0.15s;
+}
+.list:hover .list-delete-btn { opacity: 1; }
+.list-delete-btn:hover { background: #de350b; color: #fff; }
 
 .list-cards {
   display: flex;
