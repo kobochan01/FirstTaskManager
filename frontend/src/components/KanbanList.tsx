@@ -6,9 +6,10 @@ import TaskCard from './TaskCard';
 interface Props {
   list: TaskListResponse;
   onCardCreated: (listId: number, card: CardResponse) => void;
+  onCardClick: (card: CardResponse) => void;
 }
 
-export default function KanbanList({ list, onCardCreated }: Props) {
+export default function KanbanList({ list, onCardCreated, onCardClick }: Props) {
   const [showForm, setShowForm] = useState(false);
   const [title, setTitle] = useState('');
   const [saving, setSaving] = useState(false);
@@ -39,7 +40,7 @@ export default function KanbanList({ list, onCardCreated }: Props) {
       </div>
       <div className="list-cards">
         {list.cards.map((card) => (
-          <TaskCard key={card.id} card={card} />
+          <TaskCard key={card.id} card={card} onCardClick={onCardClick} />
         ))}
       </div>
 

@@ -3,6 +3,8 @@ package com.example.taskmanager.controller;
 import com.example.taskmanager.dto.ApiResponse;
 import com.example.taskmanager.dto.CardResponse;
 import com.example.taskmanager.dto.CreateCardRequest;
+import com.example.taskmanager.dto.MoveCardRequest;
+import com.example.taskmanager.dto.UpdateCardRequest;
 import com.example.taskmanager.entity.Card;
 import com.example.taskmanager.entity.TaskList;
 import com.example.taskmanager.repository.CardRepository;
@@ -81,6 +83,38 @@ public class CardController {
             card.setDueDate(LocalDateTime.parse(request.getDueDate()));
         }
 
+        Card saved = cardRepository.save(card);
+        return ApiResponse.ok(new CardResponse(saved));
+    }
+
+    @PutMapping("/api/cards/{id}")
+    public ApiResponse<CardResponse> updateCard(
+            @PathVariable Long id,
+            @RequestBody UpdateCardRequest request) {
+        Card card = cardRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Card not found: " + id));
+        if (request.getTitle() == null || request.getTitle().isBlank()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Title is required");
+        }
+        card.setTitle(request.getTitle().trim());
+        card.setDescription(request.getDescription());
+        card.setDueDate(request.getDueDate() != null && !request.getDueDate().isBlank()
+                ? LocalDateTime.parse(request.getDueDate()) : null);
+        Card saved = cardRepository.save(card);
+        return ApiResponse.ok(new CardResponse(saved));
+    }
+
+    @PatchMapping("/api/cards/{id}/move")
+    public ApiResponse<CardResponse> moveCard(
+            @PathVariable Long id,
+            @RequestBody MoveCardRequest request) {
+        Card card = cardRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Card not found: " + id));
+        TaskList targetList = taskListRepository.findById(request.getTargetListId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "List not found: " + request.getTargetListId()));
+        int nextPosition = cardRepository.findByTaskListIdOrderByPosition(request.getTargetListId()).size() + 1;
+        card.setTaskList(targetList);
+        card.setPosition(nextPosition);
         Card saved = cardRepository.save(card);
         return ApiResponse.ok(new CardResponse(saved));
     }

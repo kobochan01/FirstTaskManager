@@ -58,3 +58,24 @@ export function createList(boardId: number, name: string): Promise<TaskListRespo
     body: JSON.stringify({ name }),
   });
 }
+
+export function updateCard(
+  cardId: number,
+  title: string,
+  description?: string,
+  dueDate?: string,
+): Promise<CardResponse> {
+  return request<CardResponse>(`/cards/${cardId}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ title, description: description || null, dueDate: dueDate || null }),
+  });
+}
+
+export function moveCard(cardId: number, targetListId: number): Promise<CardResponse> {
+  return request<CardResponse>(`/cards/${cardId}/move`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ targetListId }),
+  });
+}
