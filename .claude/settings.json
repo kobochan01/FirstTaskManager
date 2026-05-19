@@ -1,17 +1,12 @@
 {
   "permissions": {
     "allow": [
-      "Bash(netstat *)",
-      "Bash(docker ps *)",
-      "Bash(docker-compose up *)",
-      "Bash(docker-compose down *)",
-      "Bash(docker-compose ps *)",
-      "Bash(docker-compose *)",
-      "Bash(taskkill *)",
-      "Bash(npm run dev *)",
-      "Bash(npm run dev)",
-      "Bash(./mvnw spring-boot:run *)",
-      "Bash(./mvnw spring-boot:run)"
+      "Bash(*)",
+      "PowerShell(*)",
+      "Edit(*)",
+      "Write(*)",
+      "WebFetch(*)",
+      "WebSearch(*)"
     ]
   },
   "hooks": {
@@ -31,7 +26,7 @@
     ],
     "PreToolUse": [
       {
-        "matcher": "Bash",
+        "matcher": "Bash|PowerShell",
         "hooks": [
           {
             "type": "command",
