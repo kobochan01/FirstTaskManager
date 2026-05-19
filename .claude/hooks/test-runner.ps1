@@ -10,6 +10,8 @@ $projectRoot = "c:/Projects/FirstTaskManager"
 
 if ($f -match 'frontend/' -and $f -match '\.(ts|tsx|js|jsx|css|scss)$') {
     Push-Location "$projectRoot/frontend"
+    $pkg = Get-Content "package.json" -Raw | ConvertFrom-Json
+    if (-not $pkg.scripts.test) { Pop-Location; exit 0 }
     $output = npm test -- --run 2>&1
     $exitCode = $LASTEXITCODE
     Pop-Location
