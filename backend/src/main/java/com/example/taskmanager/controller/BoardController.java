@@ -58,6 +58,9 @@ public class BoardController {
 
     @PostMapping
     public ApiResponse<Board> createBoard(@RequestBody Board board) {
+        if (board.getName() == null || board.getName().isBlank()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Name is required");
+        }
         Board saved = boardRepository.save(board);
         return ApiResponse.ok(saved);
     }

@@ -11,11 +11,16 @@ export default function SearchResultsPage() {
   const [cards, setCards] = useState<CardResponse[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [prevKeyword, setPrevKeyword] = useState(keyword);
 
-  useEffect(() => {
+  if (prevKeyword !== keyword) {
+    setPrevKeyword(keyword);
     setLoading(true);
     setCards([]);
     setError(null);
+  }
+
+  useEffect(() => {
     searchCards(keyword || undefined)
       .then(setCards)
       .catch(() => setError('検索に失敗しました'))

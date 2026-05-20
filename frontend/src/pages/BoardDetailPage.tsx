@@ -14,11 +14,16 @@ export default function BoardDetailPage() {
   const [selectedCard, setSelectedCard] = useState<CardResponse | null>(null);
   const [editingBoardName, setEditingBoardName] = useState(false);
   const [boardNameDraft, setBoardNameDraft] = useState('');
+  const [prevBoardId, setPrevBoardId] = useState(boardId);
+
+  if (prevBoardId !== boardId) {
+    setPrevBoardId(boardId);
+    setLoading(true);
+    setError(null);
+  }
 
   useEffect(() => {
     if (!boardId) return;
-    setLoading(true);
-    setError(null);
     fetchBoardDetail(Number(boardId))
       .then(setBoard)
       .catch(() => setError('ボードの読み込みに失敗しました'))

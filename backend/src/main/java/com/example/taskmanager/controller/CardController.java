@@ -11,6 +11,7 @@ import com.example.taskmanager.repository.CardRepository;
 import com.example.taskmanager.repository.TaskListRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -115,6 +116,7 @@ public class CardController {
     }
 
     @PatchMapping("/api/cards/{id}/move")
+    @Transactional
     public ApiResponse<CardResponse> moveCard(
             @PathVariable Long id,
             @RequestBody MoveCardRequest request) {
