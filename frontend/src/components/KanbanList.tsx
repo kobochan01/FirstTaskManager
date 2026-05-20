@@ -11,9 +11,10 @@ interface Props {
   onCardDropped: (cardId: number, fromListId: number, toListId: number, position: number) => void;
   onListDeleted: (listId: number) => void;
   onListRenamed: (listId: number, newName: string) => void;
+  onError?: (msg: string) => void;
 }
 
-export default function KanbanList({ boardId, list, onCardCreated, onCardClick, onCardDropped, onListDeleted, onListRenamed }: Props) {
+export default function KanbanList({ boardId, list, onCardCreated, onCardClick, onCardDropped, onListDeleted, onListRenamed, onError }: Props) {
   const [showForm, setShowForm] = useState(false);
   const [title, setTitle] = useState('');
   const [saving, setSaving] = useState(false);
@@ -29,7 +30,7 @@ export default function KanbanList({ boardId, list, onCardCreated, onCardClick, 
       await deleteList(boardId, list.id);
       onListDeleted(list.id);
     } catch {
-      // エラー時は何もしない（UIを変化させない）
+      onError?.('リストの削除に失敗しました');
     }
   }
 
@@ -41,7 +42,7 @@ export default function KanbanList({ boardId, list, onCardCreated, onCardClick, 
       await updateList(boardId, list.id, trimmed);
       onListRenamed(list.id, trimmed);
     } catch {
-      // エラー時は変更しない
+      onError?.('リスト名の変更に失敗しました');
     }
   }
 

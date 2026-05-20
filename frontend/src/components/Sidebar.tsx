@@ -6,10 +6,12 @@ import SearchBar from './SearchBar';
 
 export default function Sidebar() {
   const [boards, setBoards] = useState<Board[]>([]);
+  const [loadError, setLoadError] = useState(false);
   const location = useLocation();
 
   const loadBoards = useCallback(() => {
-    fetchBoards().then(setBoards).catch(() => {});
+    setLoadError(false);
+    fetchBoards().then(setBoards).catch(() => setLoadError(true));
   }, []);
 
   useEffect(() => {
@@ -33,6 +35,11 @@ export default function Sidebar() {
 
       <nav className="sidebar-nav">
         <div className="sidebar-section-label">BOARDS</div>
+        {loadError && (
+          <p className="error-message" style={{ padding: '4px 16px', fontSize: '12px' }}>
+            読み込みに失敗しました
+          </p>
+        )}
         <ul className="sidebar-board-list">
           {boards.map((board) => (
             <li key={board.id}>

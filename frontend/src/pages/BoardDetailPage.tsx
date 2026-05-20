@@ -15,6 +15,12 @@ export default function BoardDetailPage() {
   const [editingBoardName, setEditingBoardName] = useState(false);
   const [boardNameDraft, setBoardNameDraft] = useState('');
   const [prevBoardId, setPrevBoardId] = useState(boardId);
+  const [actionError, setActionError] = useState<string | null>(null);
+
+  const showActionError = useCallback((msg: string) => {
+    setActionError(msg);
+    setTimeout(() => setActionError(null), 3000);
+  }, []);
 
   if (prevBoardId !== boardId) {
     setPrevBoardId(boardId);
@@ -137,9 +143,9 @@ export default function BoardDetailPage() {
         };
       });
     } catch {
-      // API失敗時はUIを変化させない
+      showActionError('カードの移動に失敗しました');
     }
-  }, []);
+  }, [showActionError]);
 
   const handleModalClose = useCallback(() => {
     setSelectedCard(null);
@@ -153,7 +159,7 @@ export default function BoardDetailPage() {
       const updated = await updateBoard(Number(boardId), trimmed);
       setBoard((prev) => prev ? { ...prev, name: updated.name } : prev);
     } catch {
-      // エラー時は変更なし
+      showActionError('ボード名の変更に失敗しました');
     }
   }
 
@@ -174,9 +180,9 @@ export default function BoardDetailPage() {
       const refreshed = await fetchBoardDetail(board.id);
       setBoard(refreshed);
     } catch {
-      // エラー時は変更なし
+      showActionError('リストの移動に失敗しました');
     }
-  }, [board]);
+  }, [board, showActionError]);
 
   return (
     <>
@@ -210,6 +216,7 @@ export default function BoardDetailPage() {
 
       {loading && <p className="status-message" style={{ padding: '20px 24px' }}>読み込み中...</p>}
       {error && <p className="error-message" style={{ padding: '20px 24px' }}>{error}</p>}
+      {actionError && <p className="error-message" style={{ padding: '8px 24px' }}>{actionError}</p>}
       {board && (
         <KanbanBoard
           boardId={board.id}
@@ -221,6 +228,7 @@ export default function BoardDetailPage() {
           onListDeleted={handleListDeleted}
           onListRenamed={handleListRenamed}
           onListMoved={handleListMoved}
+          onError={showActionError}
         />
       )}
 
