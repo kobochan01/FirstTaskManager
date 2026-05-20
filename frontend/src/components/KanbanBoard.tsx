@@ -13,9 +13,10 @@ interface Props {
   onListDeleted: (listId: number) => void;
   onListRenamed: (listId: number, newName: string) => void;
   onListMoved: (listId: number, position: number) => void;
+  onError?: (msg: string) => void;
 }
 
-export default function KanbanBoard({ boardId, lists, onCardCreated, onListCreated, onCardClick, onCardDropped, onListDeleted, onListRenamed, onListMoved }: Props) {
+export default function KanbanBoard({ boardId, lists, onCardCreated, onListCreated, onCardClick, onCardDropped, onListDeleted, onListRenamed, onListMoved, onError }: Props) {
   const sorted = [...lists].sort((a, b) => a.position - b.position);
   const [showForm, setShowForm] = useState(false);
   const [name, setName] = useState('');
@@ -97,6 +98,7 @@ export default function KanbanBoard({ boardId, lists, onCardCreated, onListCreat
             onCardDropped={onCardDropped}
             onListDeleted={onListDeleted}
             onListRenamed={onListRenamed}
+            onError={onError}
           />
         </>
       ))}
