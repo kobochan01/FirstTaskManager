@@ -23,10 +23,10 @@ FirstTaskManager の開発サーバーを起動する。引数なし or `all` �
 
 ### 1. ポート競合チェック
 
-起動前に対象ポートを確認する：
+起動前に対象ポートを確認する（DBは5433）：
 
 ```powershell
-netstat -ano | findstr ":8080 :5173 :5432"
+netstat -ano | findstr ":8080 :5173 :5433"
 ```
 
 競合プロセスがあれば停止する：
@@ -40,30 +40,36 @@ $pids | ForEach-Object { taskkill /PID $_ /F }
 
 ### 2. DB（PostgreSQL）の確認
 
-DB は docker-compose で管理。起動していない場合のみ起動する：
+DB は docker-compose で管理。`docker ps` でコンテナが起動していない場合のみ起動する：
 
 ```powershell
-cd "c:\Users\koboc\OneDrive\デスクトップ\CursorProject\FirstTaskManager"
+cd "c:\Projects\FirstTaskManager"
 docker-compose up -d
 ```
 
 ### 3. バックエンド（Spring Boot / port 8080）の起動
 
+新しいターミナルウィンドウを開かず、ログファイルに出力してバックグラウンド起動する：
+
 ```powershell
-cd "c:\Users\koboc\OneDrive\デスクトップ\CursorProject\FirstTaskManager\backend"
-./mvnw spring-boot:run
+Start-Process powershell -WindowStyle Hidden -ArgumentList "-Command", "cd 'c:\Projects\FirstTaskManager\backend'; ./mvnw spring-boot:run > 'c:\Projects\FirstTaskManager\backend-start.log' 2>&1"
 ```
 
-バックグラウンドで起動し、`Started` ログが出るまで待つ。
+`Started` ログが出るまで待つ：
+
+```powershell
+# backend-start.log を監視して Started が出たら完了
+```
 
 ### 4. フロントエンド（Vite / port 5173）の起動
 
+同様にウィンドウなしでバックグラウンド起動する：
+
 ```powershell
-cd "c:\Users\koboc\OneDrive\デスクトップ\CursorProject\FirstTaskManager\frontend"
-npm run dev
+Start-Process powershell -WindowStyle Hidden -ArgumentList "-Command", "cd 'c:\Projects\FirstTaskManager\frontend'; npm run dev > 'c:\Projects\FirstTaskManager\frontend-start.log' 2>&1"
 ```
 
-`http://localhost:5173` が表示されたら起動完了。
+`http://localhost:5173` がログに表示されたら起動完了。
 
 ## 起動後の確認
 

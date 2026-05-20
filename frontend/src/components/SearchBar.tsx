@@ -1,14 +1,17 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
 export default function SearchBar() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const [query, setQuery] = useState(searchParams.get('q') ?? '');
+  const paramQuery = searchParams.get('q') ?? '';
+  const [query, setQuery] = useState(paramQuery);
+  const [syncedParam, setSyncedParam] = useState(paramQuery);
 
-  useEffect(() => {
-    setQuery(searchParams.get('q') ?? '');
-  }, [searchParams]);
+  if (syncedParam !== paramQuery) {
+    setSyncedParam(paramQuery);
+    setQuery(paramQuery);
+  }
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();

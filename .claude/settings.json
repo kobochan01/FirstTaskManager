@@ -1,0 +1,42 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(*)",
+      "PowerShell(*)",
+      "Edit(*)",
+      "Write(*)",
+      "WebFetch(*)",
+      "WebSearch(*)"
+    ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write|NotebookEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "& '.claude\\hooks\\test-runner.ps1'",
+            "shell": "powershell",
+            "timeout": 120,
+            "statusMessage": "テストを実行中..."
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash|PowerShell",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "& '.claude\\hooks\\danger-guard.ps1'",
+            "shell": "powershell",
+            "timeout": 10,
+            "statusMessage": "コマンドの安全性を確認中..."
+          }
+        ]
+      }
+    ]
+  }
+}

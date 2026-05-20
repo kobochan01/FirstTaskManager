@@ -7,7 +7,8 @@ interface Props {
 
 function highlight(text: string, keyword: string) {
   if (!keyword) return <>{text}</>;
-  const parts = text.split(new RegExp(`(${keyword})`, 'gi'));
+  const escaped = keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const parts = text.split(new RegExp(`(${escaped})`, 'gi'));
   return (
     <>
       {parts.map((part, i) =>
