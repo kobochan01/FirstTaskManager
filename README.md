@@ -25,45 +25,51 @@ ReactとSpring Bootを用いたフルスタック開発、PostgreSQLによるデ
 
 ## 技術スタック
 
-### フェーズ1：プロトタイプ（完了）
-
-| 役割 | 技術 |
-|------|------|
-| マークアップ | HTML |
-| スタイル | CSS |
-| インタラクション | JavaScript（Vanilla） |
-
-### フェーズ2：本実装（進行中）
-
-#### フロントエンド
+### フロントエンド
 
 | 役割 | 技術 | バージョン |
 |------|------|-----------|
 | UIフレームワーク | React | 19.2.6 |
-| 言語 | TypeScript | 6.0.3 |
-| ビルドツール | Vite | 8.0.13 |
+| 言語 | TypeScript | 6.0.2 |
+| ビルドツール | Vite | 8.0.12 |
 | ルーティング | React Router DOM | 7.15.1 |
 
-#### バックエンド
+### バックエンド
 
 | 役割 | 技術 | バージョン |
 |------|------|-----------|
 | 言語 | Java | 21 |
-| フレームワーク | Spring Boot | 3.3.5 |
+| フレームワーク | Spring Boot | 3.5.0 |
 | ビルドツール | Maven (mvnw) | 3.9.15 |
-| ORM | Spring Data JPA + Hibernate | Spring Boot 3.3.5 同梱 |
+| ORM | Spring Data JPA + Hibernate | Spring Boot 3.5.0 同梱 |
+
+### ローカル開発環境
+
+| 役割 | 技術 | バージョン |
+|------|------|-----------|
 | データベース | PostgreSQL | 16 |
 | コンテナ | Docker | 29.4.3 |
 | コンテナ管理 | Docker Compose | 5.1.3 |
 
+### 本番環境（AWS）
+
+| 役割 | 技術 |
+|------|------|
+| IaC | Terraform |
+| サーバー | AWS EC2 (t3.micro / Amazon Linux 2023) |
+| リバースプロキシ | nginx |
+| データベース | AWS RDS (PostgreSQL 16 / db.t3.micro) |
+| ネットワーク | AWS VPC（パブリック + プライベートサブネット） |
+
 ---
 
-## 環境構築・起動方法
+## ローカル環境構築・起動方法
 
 ### 必要なもの
 
 - Docker Desktop
 - Node.js（npm）
+- Java 21（Amazon Corretto 推奨）
 
 ### 1. DBの起動
 
@@ -73,7 +79,7 @@ docker-compose up -d
 
 | サービス | URL | 備考 |
 |---------|-----|------|
-| PostgreSQL | `localhost:5432` | DB本体 |
+| PostgreSQL | `localhost:5433` | DB本体 |
 | pgAdmin | `http://localhost:5050` | DB管理UI |
 
 pgAdminのログイン情報：
@@ -115,6 +121,22 @@ npm run dev
 
 ---
 
+## 本番環境デプロイ
+
+AWS インフラは Terraform で管理しています。インフラ構成の詳細は [docs/tech-stack.md](docs/tech-stack.md) を参照してください。
+
+```
+ローカル
+  1. terraform apply     → AWS にインフラを構築
+  2. npm run build       → React をビルド（dist/ 生成）
+  3. mvnw package        → Spring Boot JAR をビルド
+  4. scp dist/ → EC2    → フロントエンドをデプロイ
+  5. scp *.jar → EC2    → バックエンドをデプロイ
+  6. systemctl restart  → Spring Boot を再起動
+```
+
+---
+
 ## 設計ドキュメント
 
 | ドキュメント | リンク |
@@ -123,4 +145,4 @@ npm run dev
 | 機能要件 | [docs/functional-requirements.md](docs/functional-requirements.md) |
 | 画面設計 | [docs/screen-design.md](docs/screen-design.md) |
 | データベース設計 | [docs/database-design.md](docs/database-design.md) |
-| 技術スタック | [docs/tech-stack.md](docs/tech-stack.md) |
+| 技術スタック・インフラ構成 | [docs/tech-stack.md](docs/tech-stack.md) |
