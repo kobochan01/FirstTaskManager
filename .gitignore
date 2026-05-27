@@ -1,2 +1,14 @@
 # Claude Code local settings
 .claude/settings.local.json
+
+# ローカル起動ログ
+backend-build.log
+backend-start.log
+frontend-start.log
+
+# Terraform
+terraform/terraform.tfvars
+terraform/.terraform/
+terraform/.terraform.lock.hcl
+terraform/terraform.tfstate
+terraform/terraform.tfstate.backup

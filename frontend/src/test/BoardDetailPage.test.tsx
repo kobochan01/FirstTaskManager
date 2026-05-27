@@ -11,6 +11,8 @@ vi.mock('../api/client');
 const mockBoard: BoardDetailResponse = {
   id: 1,
   name: 'Test Board',
+  createdAt: '2024-01-01T00:00:00',
+  updatedAt: '2024-01-01T00:00:00',
   lists: [],
 };
 

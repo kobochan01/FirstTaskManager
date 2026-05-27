@@ -1,0 +1,20 @@
+# 実際の変数値（パスワード等を含むためコミット禁止）
+terraform.tfvars
+
+# Terraform作業ファイル
+.terraform/
+.terraform.lock.hcl
+terraform.tfstate
+terraform.tfstate.backup
+*.tfstate
+*.tfstate.*
+
+# クラッシュログ
+crash.log
+crash.*.log
+
+# 生成ファイル
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
