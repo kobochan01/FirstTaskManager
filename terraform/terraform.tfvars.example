@@ -1,0 +1,4 @@
+aws_region   = "ap-northeast-1"
+project_name = "first-task-manager"
+ec2_key_name = "AWSコンソールで作成したキーペア名"
+my_ip_cidr   = "60.115.109.72/32"  # 自分のIPアドレス（curl https://checkip.amazonaws.com で確認）
