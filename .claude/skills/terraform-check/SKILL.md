@@ -21,7 +21,7 @@ allowed-tools: Bash PowerShell
 ### 1. フォーマットチェック（fmt）
 
 ```powershell
-cd "c:\Projects\FirstTaskManager\terraform"
+cd (Join-Path (git rev-parse --show-toplevel) terraform)
 terraform fmt -check -recursive
 ```
 
@@ -34,7 +34,7 @@ terraform fmt -recursive
 ### 2. 構文・設定バリデーション（validate）
 
 ```powershell
-cd "c:\Projects\FirstTaskManager\terraform"
+cd (Join-Path (git rev-parse --show-toplevel) terraform)
 terraform init -backend=false -input=false 2>&1
 terraform validate
 ```
@@ -48,7 +48,7 @@ plan は AWS 接続が必要なため、以下の条件が揃っている場合�
 - `terraform.tfvars` が存在する
 
 ```powershell
-cd "c:\Projects\FirstTaskManager\terraform"
+cd (Join-Path (git rev-parse --show-toplevel) terraform)
 terraform plan -var-file="terraform.tfvars" -out=tfplan 2>&1
 ```
 

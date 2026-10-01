@@ -43,7 +43,7 @@ $pids | ForEach-Object { taskkill /PID $_ /F }
 DB は docker-compose で管理。`docker ps` でコンテナが起動していない場合のみ起動する：
 
 ```powershell
-cd "c:\Projects\FirstTaskManager"
+cd (git rev-parse --show-toplevel)
 docker-compose up -d
 ```
 
@@ -52,7 +52,8 @@ docker-compose up -d
 新しいターミナルウィンドウを開かず、ログファイルに出力してバックグラウンド起動する：
 
 ```powershell
-Start-Process powershell -WindowStyle Hidden -ArgumentList "-Command", "cd 'c:\Projects\FirstTaskManager\backend'; ./mvnw spring-boot:run > 'c:\Projects\FirstTaskManager\backend-start.log' 2>&1"
+$root = git rev-parse --show-toplevel
+Start-Process powershell -WindowStyle Hidden -ArgumentList "-Command", "cd '$root\backend'; ./mvnw spring-boot:run > '$root\backend-start.log' 2>&1"
 ```
 
 `Started` ログが出るまで待つ：
@@ -66,7 +67,8 @@ Start-Process powershell -WindowStyle Hidden -ArgumentList "-Command", "cd 'c:\P
 同様にウィンドウなしでバックグラウンド起動する：
 
 ```powershell
-Start-Process powershell -WindowStyle Hidden -ArgumentList "-Command", "cd 'c:\Projects\FirstTaskManager\frontend'; npm run dev > 'c:\Projects\FirstTaskManager\frontend-start.log' 2>&1"
+$root = git rev-parse --show-toplevel
+Start-Process powershell -WindowStyle Hidden -ArgumentList "-Command", "cd '$root\frontend'; npm run dev > '$root\frontend-start.log' 2>&1"
 ```
 
 `http://localhost:5173` がログに表示されたら起動完了。

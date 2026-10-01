@@ -1,0 +1,6 @@
+# 改行が動作に関わるファイルだけを明示する（標準環境の Git は core.autocrlf=false）
+# Windows のバッチ（mvnw.cmd を含む）は CRLF、シェルスクリプト（mvnw を含む）は LF
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.sh text eol=lf
+mvnw text eol=lf

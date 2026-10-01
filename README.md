@@ -69,7 +69,7 @@ ReactとSpring Bootを用いたフルスタック開発、PostgreSQLによるデ
 
 - Docker Desktop
 - Node.js（npm）
-- Java 21（Amazon Corretto 推奨）
+- Java 21（Eclipse Temurin。dev-environment で導入）
 
 ### 1. DBの起動
 
