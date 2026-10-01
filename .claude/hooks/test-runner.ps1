@@ -6,7 +6,8 @@ $f = $json.tool_input.file_path -replace '\\', '/'
 if ($f -match '\.(md|json|yaml|yml|toml|lock|gitignore|env|xml|properties|txt)$') { exit 0 }
 if ($f -match '\.claude/') { exit 0 }
 
-$projectRoot = "c:/Projects/FirstTaskManager"
+# Repository root = two levels above .claude/hooks/ (independent of the clone location)
+$projectRoot = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
 
 if ($f -match 'frontend/' -and $f -match '\.(ts|tsx|js|jsx|css|scss)$') {
     Push-Location "$projectRoot/frontend"
